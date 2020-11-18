@@ -1,0 +1,55 @@
+NODES THINGS TO DO
+	
+VERIFY NEW TXS :
+Receive the unverified transactions from the wallets
+	
+1- Authenticity
+	
+	Correcteness of signature (exist and made by our wallet software), 
+	validated from the private key of the wallets who made the transaction (got with the public key who made it)
+	
+2- Integrity
+	
+	Content didn't change since his creation
+
+3- Accounting coherence
+	
+	No double sending or already send
+
+send it to the "big nodes" and the mempool
+
+
+MEMORY POOL OF UNCONFIRMED TRANSACTIONS :
+a list of all the transactions who aren't verify yet
+
+send block of it to the miners
+
+BIG NODES:
+a list of all nodes verified or not
+
+			
+VERIFY NEW BLOCKS:
+Receive the result of the miners and verify everything again
+
+1- Authenticity
+	
+	Correcteness of signature (exist and made by our wallet software), 
+	validated from the private key of the wallets who made the transaction (got with the public key who made it)
+	
+2- Integrity
+	
+	Content didn't change since his creation
+
+3- Accounting coherence
+	
+	No double sending or already send
+
+Send the reward based of the crypto currency
+Verify the previous block hash and the fingerprint number of 0
+
+send the block to our own blockchain and "big nodes"
+
+CREATE AND HOLD OWN BLOCKCHAIN:
+List of block verified from our system and miners
+
+10:42 -> use the simulator not very clear about anything usefull (that's not in the pdf)
