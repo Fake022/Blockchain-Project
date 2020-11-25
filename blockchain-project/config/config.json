@@ -1,21 +1,21 @@
 {
   "development": {
     "username": "test",
-    "password": "test;",
+    "password": "test",
     "database": "blockchain",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "test",
-    "password": "test;",
+    "password": "test",
     "database": "blockchain",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "test",
-    "password": "test;",
+    "password": "test",
     "database": "blockchain",
     "host": "127.0.0.1",
     "dialect": "mysql"

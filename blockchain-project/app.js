@@ -6,7 +6,7 @@ var path = require('path');
 var session = require('express-session');
 var AccountRoutes = require('./routes/account');
 var HomeRouter = require('./routes/home');
-
+var WalletRoutes = require('./routes/wallet');
 var port = process.env.PORT || 8000;
 var app = express();
 
@@ -20,17 +20,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({secret: 'rAnd0mstr!ngs3ssionsecret'}));
 
-//app.use('/', AccountRoutes);
-//
-//app.use(function(req, res, next) {
-//  if( req.session.email == null || req.session.email.length == 0 ){
-//    res.redirect('/login'); 
-//  }
-//    else{
-//    next();
-//  }
-//});
+app.use('/', AccountRoutes);
+
+app.use(function(req, res, next) {
+    if( req.session.email == null || req.session.email.length == 0 ){
+      res.redirect('/login'); 
+    }
+      else{
+      next();
+    }
+  });
 
 app.use('/', HomeRouter);
+app.use('/', WalletRoutes);
 
 app.listen(port);

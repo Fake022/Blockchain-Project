@@ -5,71 +5,86 @@
     <title>Blockchain Simulator</title>    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+  </head>
     <body>
       <nav class="navbar navbar-light bg-light p-3">
-          <div class="d-flex col-12 col-md-3 col-lg-2 mb-2 mb-lg-0 flex-wrap flex-md-nowrap justify-content-between">
-              <a class="navbar-brand" href="#">
-                  Dashboard
-              </a>
-              <button class="navbar-toggler d-md-none collapsed mb-3" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-              </button>
-          </div>
-          <div class="col-12 col-md-4 col-lg-2">
-              <input class="form-control form-control-dark" type="text" placeholder="Search" aria-label="Search">
-          </div>
-          <div class="col-12 col-md-5 col-lg-8 d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
-              <div class="dropdown">
-                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                    Hello, <%= user_email %>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#">Sign out</a></li>
-                  </ul>
+        <div class="d-flex col-12 col-md-3 col-lg-2 mb-2 mb-lg-0 flex-wrap flex-md-nowrap justify-content-between">
+            <a class="navbar-brand" href="#">
+                Blochain Project Dashboard
+            </a>
+            <button class="navbar-toggler d-md-none collapsed mb-3" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+            <input class="form-control form-control-dark" type="text" placeholder="Search" aria-label="Search">
+        </div>
+        <div class="col-12 col-md-5 col-lg-8 d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                  Hello, <%= user_email %>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <li><a class="dropdown-item" href="#">Sign out</a></li>
+                </ul>
+              </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                          <a class="nav-link active" aria-current="page" href="/">
+                            <img width="24" height="24" src="/images/house.png" />
+                            <span class="ml-2">Dashboard</span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/wallet">
+                            <img width="24" height="24" src="/images/wallet.png" />
+                            <span class="ml-2">Wallet</span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/node">
+                            <img width="24" height="24" src="/images/nodes.png" />
+                            <span class="ml-2">Node</span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/miners">
+                            <img width="24" height="24" src="/images/bitcoin.png" />
+                            <span class="ml-2">Miners</span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/economy">
+                            <img width="24" height="24" src="/images/stats.png" />
+                            <span class="ml-2">Economy</span>
+                          </a>
+                          </li>
+                      </ul>
+                </nav>
                 </div>
-          </div>
-      </nav>
-      <div class="container-fluid">
-          <div class="row">
-              <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                  <div class="position-sticky">
-                      <ul class="nav flex-column">
-                          <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">
-                              <img width="24" height="24" src="/images/house.png" />
-                              <span class="ml-2">Dashboard</span>
-                            </a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" href="/wallet">
-                              <img width="24" height="24" src="/images/wallet.png" />
-                              <span class="ml-2">Wallet</span>
-                            </a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" href="/node">
-                              <img width="24" height="24" src="/images/nodes.png" />
-                              <span class="ml-2">Node</span>
-                            </a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" href="/miners">
-                              <img width="24" height="24" src="/images/bitcoin.png" />
-                              <span class="ml-2">Miners</span>
-                            </a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" href="/economy">
-                              <img width="24" height="24" src="/images/stats.png" />
-                              <span class="ml-2">Economy</span>
-                            </a>
-                            </li>
-                        </ul>
+              </div>
+            </nav>
+              <main class="col-md-9 ml-sm-auto col-lg-10 px-md-8 py-8">
+                <div class="row my-4">
+                    <div class="col-12 col-md-6 col-lg-3 mb-4 mb-lg-0">
+                        <div class="card">
+                          <h5 class="card-header">Keys</h5>
+                          <div class="card-body">
+                            <h5 class="card-title">Private: </h5>
+                            <p class="card-text"><%= privateKey %></p><button type="button" class="btn btn-info">Random</button>
+                            <h5 class="card-title">Public : </h5>
+                            <p class="card-text text-success"><%= publicKey %></p>
+                          </div>
+                        </div>
                   </div>
-              </nav>
-              </div>
-              </div>
+                  </div>
+                  </main>
               </body>
-              </head>
               </html>
               
