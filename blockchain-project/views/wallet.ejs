@@ -66,25 +66,108 @@
                           </a>
                           </li>
                       </ul>
-                </nav>
                 </div>
-              </div>
             </nav>
-              <main class="col-md-9 ml-sm-auto col-lg-10 px-md-8 py-8">
-                <div class="row my-4">
-                    <div class="col-12 col-md-6 col-lg-3 mb-4 mb-lg-0">
-                        <div class="card">
-                          <h5 class="card-header">Keys</h5>
-                          <div class="card-body">
-                            <h5 class="card-title">Private: </h5>
-                            <p class="card-text"><%= privateKey %></p><button type="button" class="btn btn-info">Random</button>
-                            <h5 class="card-title">Public : </h5>
-                            <p class="card-text text-success"><%= publicKey %></p>
+
+        
+        <main class="col-md-9 ml-sm-auto col-lg-10 px-md-8 py-8">
+          <div class="row">
+            <div class="col-12 col-xl-8 mb-4 mb-lg-0">
+                <div class="card">
+                    <h5 class="card-header">Keys Saved in Wallet</h5>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th scope="col">PUBLIC KEY</th>
+                                  <th scope="col">PRIVATE KEY</th>
+                                  <th scope="col">BALANCE</th>
+                                </tr>
+                              </thead>
+                              <tbody id="keys-pair">
+                              </tbody>
+                            </table>
+                      </div>
+                    </main>
+          <main class="col-md-9 ml-sm-auto col-lg-10 px-md-8 py-8">
+            <div class="row">
+            <div class="col-12 col-xl-8 mb-4 mb-lg-0">
+              <div class="card">
+                    <div class="card-header">
+                    <h5>Keys Generator</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Private: </h5>
+                        <p type="privateKey" id="private" name="privateKey" class="keys-span"><%= privateKey %></p>
+                        <h5 class="card-title">Public : </h5>
+                        <p type="publicKey" id="public" name="publicKey" class="keys-span"><%= publicKey %></p>
+                          <div class="text-center">
+                            <button type="submit" role="button" class="btn btn-primary" onclick="GetRandomKey()">Random</button>
                           </div>
+                    </div>
+                    <div class="card-footer">
+                      <div class="text-center">
+                          <button type="submit" role="button" class="btn btn-success" onclick="SaveKeys()">Safekeeping</button>
                         </div>
+                      </div>                                                                                                               
                   </div>
-                  </div>
-                  </main>
-              </body>
-              </html>
+                  </div>  
+                  </div>                          
+                </main>
+
+        <script>
+          function SaveKeys() {
+            const uri = 'http://localhost:8000/wallet/save_keys';
+            var privateKey = document.getElementById('private').innerText;
+            var publicKey = document.getElementById('public').innerText;
+            console.log({privateKey: privateKey, publicKey: publicKey});
+            const initDetails = {
+              method: 'post',
+              headers: {
+                 "Content-Type": "application/json; charset=utf-8"
+              },
+              body: JSON.stringify({privateKey: privateKey, publicKey: publicKey})
+            }
+            fetch(uri, initDetails).then(response => {
+              if (response.status == '200')
+              {
+                console.log(response);
+               return response.json();
+              } else  {
+                console.log('Error Savekeys: something went wrong ...');
+              }
+            }).then(res => {
+              console.log(res);
+              var private = document.getElementById('private').innerText;
+              var public = document.getElementById('public').innerText;
+              document.getElementById('keys-pair').innerHTML = '<tr><td>' + public + '</td>' + '<td>' + private + '<td>' + '<td>10000$<td></tr>';
+            })
+          }
+        </script>                                               
+        <script>
+         function GetRandomKey() {
+          const uri = 'http://localhost:8000/wallet/generate_keys';
+          const initDetails = {
+            method: 'get',
+            headers: {
+               "Content-Type": "application/json; charset=utf-8"
+            },
+          }
+           fetch(uri, initDetails).then(response => {
+             if (response.status == 200)
+             {
+              return response.json();
+             } else  {
+               console.log('Error GetRandomKey: something went wrong ...');
+             }
+           }).then(res => {
+              console.log(res);
+              document.getElementById('private').innerText = res.privateKey;
+              document.getElementById('public').innerText = res.publicKey;
+            })
+         }
+        </script>
+  </body>
+</html>
               

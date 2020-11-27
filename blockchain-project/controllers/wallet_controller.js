@@ -12,27 +12,36 @@ exports.generate_keys = function(req, res) {
     do {
         var privateKey = randomBytes(32);
     } while (!secp256k1.privateKeyVerify(privateKey))
-    var publicKey = secp256.getPublicKey(privateKey);
+    var publicKey = secp256.getPublicKey(privateKey.toString('hex'));
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({publicKey: publicKey, privateKey: privateKey}));
+    res.end(JSON.stringify({publicKey: publicKey, privateKey: privateKey.toString('hex')}));
 };
 
-exports.save_keys = function (req, res) {
+exports.save_keys = async function (req, res) {
     if (req.body ==! null || req.body !== undefined ) {
-        var temp = JSON.parse(req.body);
-        var matched_users_promise = models.User.findAll({
-            where: Sequelize.or({
-            email: req.session.email
-            })
-        });
-        matched_users_promise.then(function(users){
-            models.User.create({
-                privateKey: temp.privateKey,
-                publicKey: temp.publicKey
-            }).then(function() {
-                res.end(JSON.stringify({code : 200, message: "Keys sucessful saved !"}))
-            });
+        console.log(req.body);
+        var user = await models.User.findOne({
+            where: { email: req.session.email }
         })
+        console.log(user);
+        var wallet =  await models.Wallet.findOne({
+            where: {user_id: user.id}
+        });
+        if (wallet == undefined) {
+            await models.Wallet.create({
+                amount: 10000,
+                publicKey: req.body.publicKey,
+                privateKey: req.body.privateKey,
+                user_id: user.id
+            });
+        } else {
+            await wallet.update({
+                publicKey: req.body.publicKey,
+                privateKey: req.body.privateKey,
+            });
+        }
+        console.log(wallet);
+        res.end(JSON.stringify({code : 200, message: "Keys sucessful saved !"}));
     }
 };
 
