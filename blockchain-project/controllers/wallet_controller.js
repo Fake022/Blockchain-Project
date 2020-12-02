@@ -1,20 +1,15 @@
 'use strict';
 
 var models = require('../models');
-var Sequelize = require('sequelize');
-const cryptoRandomString = require('crypto-random-string');
-const { randomBytes } = require('crypto');
-const secp256k1 = require('secp256k1')
-var secp256 = require('elliptic-curve').secp256k1;
-
+const EC = require('elliptic').ec;
+const ec = new EC('secp256k1');
+var crypto = require('crypto');
 
 exports.generate_keys = function(req, res) {
-    do {
-        var privateKey = randomBytes(32);
-    } while (!secp256k1.privateKeyVerify(privateKey))
-    var publicKey = secp256.getPublicKey(privateKey.toString('hex'));
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({publicKey: publicKey, privateKey: privateKey.toString('hex')}));
+    const key = ec.genKeyPair();
+    const publicKey = key.getPublic('hex');
+    const privateKey = key.getPrivate('hex');
+    res.end(JSON.stringify({publicKey: publicKey, privateKey: privateKey}));
 };
 
 exports.save_keys = async function (req, res) {
@@ -46,9 +41,60 @@ exports.save_keys = async function (req, res) {
 };
 
 exports.wallet_page = function (req, res) {
-    do {
-        var privateKey = randomBytes(32);
-    } while (!secp256k1.privateKeyVerify(privateKey))
-    var publicKey = secp256.getPublicKey(privateKey.toString('hex'));
-    res.render('wallet', {user_email: req.session.email, publicKey:  publicKey, privateKey: privateKey.toString('hex')});   
+    const key = ec.genKeyPair();
+    const publicKey = key.getPublic('hex');
+    const privateKey = key.getPrivate('hex');
+    res.render('wallet_keys_generator', {user_email: req.session.email, publicKey:  publicKey, privateKey: privateKey});   
+};
+
+exports.wallet_transaction = async function (req, res) {
+    if (req.body ==! null || req.body !== undefined ) {
+        var user = await models.User.findOne({
+            where: { email: req.session.email }
+        });
+        var wallet =  await models.Wallet.findOne({
+            where: {user_id: user.id}
+        });
+        if (wallet == undefined) {
+            res.end(JSON.stringify({code: 401, message:"Error : wallet undefined "}));
+        }
+        const publicKey = wallet.publicKey;
+        const privateKey = wallet.privateKey;
+        res.render('wallet_transaction', {user_email: req.session.email, publicKey:  publicKey, privateKey: privateKey});
+    }
+};
+
+function calculateHash(value){
+    var hash = crypto.createHash('sha512');
+    var data = hash.update(value.fromAddress + value.toAddress + value.amount.toString(), 'utf-8');
+    var hash_rslt = data.digest('hex');
+	return (hash_rslt);
+}
+
+exports.wallet_sign_transaction = async function (req, res) {
+    if (req.body ==! null || req.body !== undefined ) {
+        var user = await models.User.findOne({
+            where: { email: req.session.email }
+        });
+        var wallet =  await models.Wallet.findOne({
+            where: {user_id: user.id}
+        });
+        if (wallet == undefined) {
+            res.end(JSON.stringify({code: 401, message:"Error : wallet undefined "}));
+        }
+        const publicKey = wallet.publicKey;
+        if (publicKey !== req.body.fromAddress){
+            res.end(JSON.stringify({code: 401, message: "Error : You cannot sign transactions for other wallets !"}));
+        }
+        const hashTx = calculateHash(req.body);
+        const sig = ec.sign(hashTx, wallet.privateKey,{canonical: true});
+        const signature = sig.toDER('hex');
+        res.end(JSON.stringify({code: 200, body: signature}));
+    }
+};
+
+exports.wallet_send_node = function (req, res) {
+    if (req.body ==! null || req.body !== undefined ) {
+
+    }
 };

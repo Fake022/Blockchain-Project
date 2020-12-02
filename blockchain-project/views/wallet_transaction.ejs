@@ -1,0 +1,136 @@
+<html>
+  <head>
+     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Simulator</title>    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <body>
+      <nav class="navbar navbar-light bg-light p-3">
+          <div class="d-flex col-12 col-md-3 col-lg-2 mb-2 mb-lg-0 flex-wrap flex-md-nowrap justify-content-between">
+              <a class="navbar-brand" href="#">
+                  Blochain Dashboard
+              </a>
+              <button class="navbar-toggler d-md-none collapsed mb-3" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+          </div>
+          <div class="col-12 col-md-4 col-lg-2">
+              <input class="form-control form-control-dark" type="text" placeholder="Search" aria-label="Search">
+          </div>
+          <div class="col-12 col-md-5 col-lg-8 d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
+              <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                    Hello, <%= user_email %>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                  </ul>
+                </div>
+          </div>
+      </nav>
+    <div class="container">
+      <nav>
+         <ul class="mcd-menu">
+          <li>
+               <a class="nav-link " aria-current="page" href="/">
+                   <img width="24" height="24" src="/images/house.png" />
+                   <span class="ml-2">Dashboard</span>
+               </a>
+           </li>
+           <li>
+               <a class="nav-link active" href="/wallet/keys_generator">
+                   <img width="24" height="24" src="/images/wallet.png" />
+                   <span class="ml-2">Wallet</span>
+               </a>
+               <ul>
+                   <li><a href="/wallet/transaction">Transaction Initiation</a></li>
+               </ul>
+           </li>
+           <li>
+             <a class="nav-link" href="/node">
+               <img width="24" height="24" src="/images/nodes.png" />
+               <span class="ml-2">Node</span>
+             </a>
+           </li>
+           <li>
+             <a class="nav-link" href="/miners">
+               <img width="24" height="24" src="/images/bitcoin.png" />
+               <span class="ml-2">Miners</span>
+             </a>
+           </li>
+           <li>
+             <a class="nav-link" href="/economy">
+               <img width="24" height="24" src="/images/stats.png" />
+               <span class="ml-2">Economy</span>
+             </a>
+           </li>
+         </ul>
+      </nav>
+   </div>
+   <div class="card-transaction">
+    <div class="card-header">
+    <h5 class="h5-transaction">Transaction</h5>
+    </div>
+    <div class="card-body">
+        <span class="input-group-text" id="basic-addon1">$</span>
+        <input id="amount" type="text" class="form-control" placeholder="Amount" aria-label="Amount" aria-describedby="basic-addon1">
+        <span class="input-group-text" id="basic-addon1">Fee</span>
+        <input id="fee" type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+        <span class="input-group-text" id="basic-addon1">From:</span>
+        <input id="from" type="text" class="form-control" placeholder="" aria-label="" value="<%= publicKey %>" aria-describedby="basic-addon1">
+        <span class="input-group-text" id="basic-addon1">To</span>
+        <input id="to" type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+        <span class="input-group-text" id="basic-addon1">PrivateKey</span>
+        <input id="pk" type="text" class="form-control" placeholder="" aria-label="" value="<%= privateKey %>" aria-describedby="basic-addon1">
+        <div class="text-center">
+          <button type="submit" role="button" class="btn btn-success" onclick="signTransaction()">Sign</button>
+        </div>
+   
+        <div class="input-group-prepend">
+            <span id="basic-addon1">Signature</span>
+          <input id='sign' type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="text-center">
+        <button type="submit" role="button" class="btn btn-success" onclick="sendNetwork()">Send to the Network</button>
+      </div>
+    </div>                                                                                                               
+</div>
+   <script>
+     function signTransaction() {
+      const uri = 'http://localhost:8000/wallet/transaction/sign';
+      var amount = document.getElementById('amount').value;
+      var fee = document.getElementById('fee').value;
+      var fromAddress = document.getElementById('from').value;
+      var toAddress = document.getElementById('to').value;
+      const initDetails = {
+        method: 'post',
+        headers: {
+           "Content-Type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify({amount: amount, fee: fee, fromAddress: fromAddress, toAddress: toAddress})
+      }
+      fetch(uri, initDetails).then(response => {
+        if (response.status == '200')
+        {
+          console.log(response);
+         return response.json();
+        } else  {
+          console.log(response.message);
+        }
+      }).then(res => {
+        console.log(res);
+       document.getElementById('sign').value = res.body;
+      })
+     }
+
+     function sendNetwork() {
+
+     }
+   </script>
+</body>
+         
