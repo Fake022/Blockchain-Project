@@ -53,3 +53,17 @@ CREATE AND HOLD OWN BLOCKCHAIN:
 List of block verified from our system and miners
 
 10:42 -> use the simulator not very clear about anything usefull (that's not in the pdf)
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+Create 3 functions to manage our database
+1 function for each table with the information of the transaction in parameter which create the database if it is not create and then set our values.
+
+1) function to verify every information
+
+2) quand une transation a été rentré dans le front, récupérer cette information
+
+3) permettre au miner de récupérer les transactions non vérifiées
