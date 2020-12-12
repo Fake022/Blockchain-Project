@@ -69,12 +69,13 @@ minerRoutes.post('/transaction', (req, res) => {
 
 minerRoutes.post('/addtoblock', (req, res) => {
     console.log(req.body.transaction);
-    req.session.transactions += req.body.transaction;
+    res.redirect('/miner');
 })
 
 minerRoutes.post('/miner', (req, res) => {
+    console.log(req.body);
     var nonce = 0;
-    var block = JSON.stringify(req.session.transactions[0])
+    var block = req.body.block + req.body.prev + JSON.stringify(req.session.transactions);
     console.log(block);
     for (let i = 0; ; i++) {
         let toHash = block + i;
