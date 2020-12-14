@@ -120,9 +120,18 @@ h5.h5-transaction{
   position: absolute;
   width: 20%;
   height: 20%;
-  padding-top: 3%;
+  padding-top: 2%;
+  z-index: 100%;
   left: 42%;
+}
 
+.notif-economy {
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  padding-top: 2%;
+  z-index: 100%;
+  left: 42%;
 }
 
 .mcd-menu li {

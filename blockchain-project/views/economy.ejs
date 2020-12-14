@@ -32,8 +32,17 @@
       </nav>
       <%- include('component/sidebar/sidebar.ejs', {active_index: null, active_miner: null, active_wallet: null, active_economy: "active", active_node: null}) %>
       <div class="alert-economy">
-        <div id="alert" class="alert alert-success" style="display: none;" role="alert">Service send successfully !</div>
+        <div id="alert-send" class="alert alert-success" style="display: none;" role="alert">
+            <img width="24" height="24" src="/images/send.png" />
+            Service send successfully !
         </div>
+        </div>
+        <div class="notif-economy">
+            <div class="alert alert-primary" style="display: none;" role="alert">            
+                <img width="24" height="24" src="/images/check.png" />
+               New Public service available !
+             </div>
+         </div>
       <div class="economy">
         <div class="card-header">
             <div class="card-header-h5"><h5>Send To Economy</h5></div>
@@ -62,6 +71,7 @@
              </table>
            </div>
          </div>
+
      </div>
 
      <script>
@@ -80,8 +90,7 @@
             };
             console.log(pk + '\n' + gs + '\n' + price);
             fetch(uri, initDetails).then(response => {
-                if (response.status == '200')
-                {
+                if (response.status == '200') {
                   console.log(response);
                  return response.json();
                 } else  {
@@ -89,9 +98,9 @@
                 }
               }).then(res => {
                 console.log(res);
-                document.getElementById('alert').style.display = "block";
+                document.getElementById('alert-send').style.display = "block";
                 setTimeout(function(){
-                    document.getElementById('alert').style.display = "none";
+                    document.getElementById('alert-send').style.display = "none";
                 }, 2000);
                 
             });
@@ -106,8 +115,7 @@
                 },
               }
               fetch(uri, initDetails).then(response => {
-                if (response.status == 200)
-                {
+                if (response.status == 200) {
                  return response.json();
                  console.log(response);
                 } else  {
@@ -123,6 +131,10 @@
                  })
                  var tmp = document.getElementById('economy-list').innerHTML;
                  document.getElementById('economy-list').innerHTML = tmp + '</tr>';
+               /*  document.getElementById('alert').style.display = "block";
+                 setTimeout(function(){
+                     document.getElementById('alert').style.display = "none";
+                 }, 2000);*/
                  setTimeout(getToEconomy, 1000);
             });
         }
