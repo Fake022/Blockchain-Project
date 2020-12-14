@@ -15,6 +15,8 @@ const expressWs = require('express-ws')(app);
 var allUser = [];
 var allemail = [];
 var port = process.env.PORT || 8000;
+var Mempool = require('./module/Mempool/mempool');
+var Blockchain = require('./module/Blockchain/blockchain');
 
 const key = fs.readFile('./key-rsa.pem', function(err, data) {
   if (err) {
@@ -34,13 +36,13 @@ const cert = fs.readFile('./cert.pem', function(err, data) {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine','ejs');
 
+app.use(express.static('./'));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({secret: 'rAnd0mstr!ngs3ssionsecret'}));
-
-
 
 
 app.use('/', AccountRoutes);
@@ -58,6 +60,7 @@ app.use('/', HomeRouter);
 app.use('/', WalletRoutes);
 app.use('/', NodeRoutes);
 app.use('/', EconomyRoutes);
+
 
 const getUniqueID = () => {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -79,23 +82,28 @@ function addEmailToList(email) {
   });
 }
 
+function checkTransaction() {
+
+}
+
 app.ws('/', (ws, req) => {
   var userID = getUniqueID();
   addUserToList(userID);
   console.log('connected: ' + userID);
   addEmailToList(req.session.email);
   console.log('List user : ' + allUser);
-  expressWs.getWss().clients.forEach(client => {
-    client.send(JSON.stringify({list_user: allUser.length, userID: userID}))
+  checkTransaction();
+  ws.on('message', function (message) {
+    console.log(message);
+    if (message == "get_user_list") {
+      expressWs.getWss().clients.forEach(client => {
+        client.send(JSON.stringify({list_user: allUser.length}))
+      });
+    }
   });
-
   setInterval(function timeout() {
-    ws.pong("heartbeat");
-  }, 500);
-
-});
-
-app.ws('/transaction', (ws, req) => {
+      ws.pong("heartbeat");
+    }, 500);
 
 });
 

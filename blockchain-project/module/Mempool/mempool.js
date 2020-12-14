@@ -28,5 +28,4 @@ module.exports = class Mempool {
     getAllList() {
         return this.list;
     }
-
 }
