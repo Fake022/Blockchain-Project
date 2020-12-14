@@ -72,7 +72,7 @@ function calculateHash(value){
 }
 
 exports.wallet_sign_transaction = async function (req, res) {
-    if (req.body ==! null || req.body !== undefined ) {
+    if (req.body ==! null || req.body ==! undefined ) {
         var user = await models.User.findOne({
             where: { email: req.session.email }
         });

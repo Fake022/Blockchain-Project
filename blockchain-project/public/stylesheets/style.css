@@ -25,6 +25,11 @@ body {
     clear: both;
 }
 
+.card-header-h5 {
+  position: relative;
+  left: 39%;
+}
+
 @media only screen and (min-width: 1200px) {
     .container {
         width: 1210px;
@@ -225,7 +230,7 @@ h5.h5-transaction{
   border-right: 5px solid transparent;*/
   
   /* == */
-  top: 42%;
+  top: 12%;
   left: 0;
   border-left: 5px solid #e67e22;
   border-top: 5px solid transparent;
@@ -237,7 +242,7 @@ h5.h5-transaction{
 .mcd-menu li a.active:after {
   content: "";
   position: absolute;
-  top: 42%;
+  top: 12%;
   right: 0;
   border-right: 5px solid #e67e22;
   border-top: 5px solid transparent;
@@ -300,7 +305,30 @@ h5.h5-transaction{
     }
 }
 
+.network {
+  position: absolute;
+  left: 35%;
+  width: 30%;
+}
 
+.economy {
+  position: relative;
+  margin-top: 7%;
+  left: 30%;
+  width: 50%;
+}
+
+.button-send {
+  position: relative;
+  margin-top: 2%;
+  left: 43%;
+}
+
+.button-netwok {
+  margin-top: 10%;
+  position: relative;
+  left: 35%;
+}
 
 .mcd-menu li ul,
 .mcd-menu li ul li ul {

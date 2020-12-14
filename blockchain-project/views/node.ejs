@@ -30,9 +30,51 @@
                 </div>
           </div>
       </nav>
-      <%- include('component/sidebar/sidebar.ejs', {active_index: "active", active_miner: null, active_wallet: null, active_economy: null, active_node: null}) %>
-      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-      <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
-      <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
-  </body>
-  </html>
+      <%- include('component/sidebar/sidebar.ejs', {active_index: null, active_miner: null, active_wallet: null, active_economy: null, active_node: "active"}) %>
+   <div class="network">
+     <div class="button-netwok">
+      <button type="button" class="btn btn-primary" onclick="JoinNetwork()">Join Network</button>
+     </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">NODE NR</th>
+                <th scope="col">BLOCKCHAIN LENGHT</th>
+              </tr>
+            </thead>
+            <tbody id="network-list">
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+    <script>
+        function JoinNetwork() {
+            let socket = new WebSocket('ws://localhost:8000/');
+            socket.addEventListener('message', function (event) {
+              document.getElementById('network-list').innerHTML = '<tr>';
+              tmp = JSON.parse(event.data);
+              var list_user = tmp.list_user;
+              var userID = tmp.userID;
+              sessionStorage.setItem('userID', userID);
+              for (i = 0; i < list_user; i++) {
+                console.log(list_user);
+                console.log(i);
+                var tmp = document.getElementById('network-list').innerHTML;
+                console.log('test');
+                document.getElementById('network-list').innerHTML = tmp + '<td>NODE NR ' + i  + '</td><td>Blocks</td>';
+              }
+              var tmp = document.getElementById('network-list').innerHTML;
+              document.getElementById('network-list').innerHTML = tmp + '</tr>';
+            });
+        }
+
+        function heartbeat() {
+          setInterval(function(socket){ socket.send("heartbeat"); }, 500);
+        }
+    </script>
+</body>
+<footer>
+</footer>

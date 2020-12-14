@@ -30,45 +30,7 @@
                 </div>
           </div>
       </nav>
-    <div class="container">
-      <nav>
-         <ul class="mcd-menu">
-          <li>
-               <a class="nav-link " aria-current="page" href="/">
-                   <img width="24" height="24" src="/images/house.png" />
-                   <span class="ml-2">Dashboard</span>
-               </a>
-           </li>
-           <li>
-               <a class="nav-link active" href="/wallet/keys_generator">
-                   <img width="24" height="24" src="/images/wallet.png" />
-                   <span class="ml-2">Wallet</span>
-               </a>
-               <ul>
-                   <li><a href="/wallet/transaction">Transaction Initiation</a></li>
-               </ul>
-           </li>
-           <li>
-             <a class="nav-link" href="/node">
-               <img width="24" height="24" src="/images/nodes.png" />
-               <span class="ml-2">Node</span>
-             </a>
-           </li>
-           <li>
-             <a class="nav-link" href="/miners">
-               <img width="24" height="24" src="/images/bitcoin.png" />
-               <span class="ml-2">Miners</span>
-             </a>
-           </li>
-           <li>
-             <a class="nav-link" href="/economy">
-               <img width="24" height="24" src="/images/stats.png" />
-               <span class="ml-2">Economy</span>
-             </a>
-           </li>
-         </ul>
-      </nav>
-   </div>
+      <%- include('component/sidebar/sidebar.ejs', {active_index: null, active_miner: null, active_wallet: "active", active_economy: null, active_node: null}) %>
    <div class="card-transaction">
     <div class="card-header">
     <h5 class="h5-transaction">Transaction</h5>
