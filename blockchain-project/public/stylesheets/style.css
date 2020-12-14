@@ -116,6 +116,15 @@ h5.h5-transaction{
 
 }
 
+.alert-economy {
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  padding-top: 3%;
+  left: 42%;
+
+}
+
 .mcd-menu li {
   position: relative;
   border-bottom: 0;
