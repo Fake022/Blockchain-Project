@@ -8,71 +8,16 @@ var Sequelize = require('sequelize');
 const crypto = require("crypto");
 const bcrypt = require('bcrypt');
 
-var minerRoutes = express.Router();
-
-minerRoutes.get('/miner', (req, res) => {
-    var mempool2 = [
-        {
-            TxNr: 0,
-            amount: 1000,
-            fee: 20,
-            from: "f878604855f44bd932fbeeb65b95a901",
-            to: "c5317135db810f502b11fd7b86d58b42",
-            signature: "haha yes"
-        },
-        {
-            TxNr: 1,
-            amount: 360,
-            fee: 50,
-            from: "6b9b1d73a087acfaab5ee7e28e349c27",
-            to: "c5317135db810f502b11fd7b86d58b42",
-            signature: "haha no"
-        },
-        {
-            TxNr: 2,
-            amount: 420,
-            fee: 69,
-            from: "f878604855f44bd932fbeeb65b95a901",
-            to: "6b9b1d73a087acfaab5ee7e28e349c27",
-            signature: "perhaps"
-        }
-    ];
-    // var mempool_promise = models.Transaction.findAll();
-    // mempool_promise.then(mempool => {
-    //     res.render('miner/miner', {mempool: mempool});
+exports.miner_page = async (req, res) => {
+    let email = req.session.email;
+    // var transactions =  await models.Transactions.find({
+    //     where: {user_id: user.id}
     // });
-    var transactions = [
-        {
-            TxNr: 0,
-            amount: 1000,
-            fee: 20,
-            from: "f878604855f44bd932fbeeb65b95a901",
-            to: "c5317135db810f502b11fd7b86d58b42",
-            signature: "haha yes"
-        },
-        {
-            TxNr: 1,
-            amount: 360,
-            fee: 50,
-            from: "6b9b1d73a087acfaab5ee7e28e349c27",
-            to: "c5317135db810f502b11fd7b86d58b42",
-            signature: "haha no"
-        }
-    ];
-    req.session.transactions = transactions;
-    res.render('miner/miner', {mempool: mempool2, transactions: req.session.transactions, hash: req.query.hash, nonce: req.query.nonce});
-});
+    var transactions = [];
+    res.render('miner', {user_email: email, transactions: transactions, hash: req.query.hash, nonce: req.query.nonce});
+};
 
-minerRoutes.post('/transaction', (req, res) => {
-    models.Transaction.create(req.body.transaction);
-});
-
-minerRoutes.post('/addtoblock', (req, res) => {
-    console.log(req.body.transaction);
-    res.redirect('/miner');
-})
-
-minerRoutes.post('/miner', (req, res) => {
+exports.mine = (req, res) => {
     console.log(req.body);
     var nonce = 0;
     var block = req.body.block + req.body.prev + JSON.stringify(req.session.transactions);
@@ -87,7 +32,5 @@ minerRoutes.post('/miner', (req, res) => {
         }
     }
     console.log("final hash:" +  hash + "\nnonce: " + nonce);
-    res.redirect(`/miner?hash=${hash}&nonce=${nonce}`);
-});
-
-module.exports = {"MinerRoutes" : minerRoutes};
+    res.end(JSON.stringify({code: 200, hash: hash, nonce: nonce}));
+};

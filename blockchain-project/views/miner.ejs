@@ -1,157 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="BasicAuth">
-    <meta name="author" content="siddub">
+<html>
+  <head>
+     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Simulator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <body>
+      <nav class="navbar navbar-light bg-light p-3">
+          <div class="d-flex col-12 col-md-3 col-lg-2 mb-2 mb-lg-0 flex-wrap flex-md-nowrap justify-content-between">
+              <a class="navbar-brand" href="#">
+                  Blockchain Dashboard
+              </a>
+              <button class="navbar-toggler d-md-none collapsed mb-3" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+          </div>
+          <div class="col-12 col-md-4 col-lg-2">
+              <input class="form-control form-control-dark" type="text" placeholder="Search" aria-label="Search">
+          </div>
+          <div class="col-12 col-md-5 col-lg-8 d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
+              <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                    Hello, <%= user_email %>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                  </ul>
+                </div>
+          </div>
+      </nav>
+      <%- include('component/sidebar/sidebar.ejs', {active_index: null, active_miner: "active", active_wallet: null, active_economy: null, active_node: null}) %>
+      <div id="miner" class="key-saved">
+      <form action="/miner" method="post">
+          <h2>Miner</h2>
+          Block #
+          <input name="block" type="text" class="form-control" placeholder="Block #" autofocus="true"/>
+          Nonce
+          <input name="nonce" type="text" class="form-control" placeholder="<%= nonce || 'nonce' %>"/>
 
-    <title>Blockchain Miner Simulator</title>
-
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.min.css" rel="stylesheet" crossorigin="anonymous">
-    <script>
-      function insert(i) {
-
-      }
-    </script>
-</head>
-
-<body>
-    <div id="mempool">
-        <h2>Mempool</h2>
-        <table id="mempool" class="table table-hover table-bordered text-table">
-            <thead>
-                <tr>
-                    <th scope="col">Tx Nr</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Fee</th>
-                    <th scope="col">From</th>
-                    <th scope="col">To</th>
-                    <th scope="col">Signature</th>
-                    <th scope="col">Insert</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (mempool.length > 0) { %>
-                    <% for (var i = 0; i < mempool.length; i++){ %>
+          <div style="text-align:center;margin-bottom:10px;margin-top:15px">
+            <h4>Transactions</h4>
+            <table id="transactions" class="table table-hover table-bordered text-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Tx Nr</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Fee</th>
+                        <th scope="col">From</th>
+                        <th scope="col">To</th>
+                        <th scope="col">Signature</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (transactions.length > 0) { %>
+                        <% for (var i = 0; i < transactions.length; i++){ %>
+                            <tr>
+                                <td>
+                                    <%= transactions[i].TxNr %>
+                                </td>
+                                <td>
+                                    <%= transactions[i].amount %>
+                                </td>
+                                <td>
+                                    <%= transactions[i].fee %>
+                                </td>
+                                <td>
+                                    <%= transactions[i].from %>
+                                </td>
+                                <td>
+                                    <%= transactions[i].to %>
+                                </td>
+                                <td>
+                                    <%= transactions[i].signature %>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% } %>
+                    <% if (transactions.length == 0) { %>
                         <tr>
-                            <td>
-                                <%= mempool[i].TxNr %>
-                            </td>
-                            <td>
-                                <%= mempool[i].amount %>
-                            </td>
-                            <td>
-                                <%= mempool[i].fee %>
-                            </td>
-                            <td>
-                                <%= mempool[i].from %>
-                            </td>
-                            <td>
-                                <%= mempool[i].to %>
-                            </td>
-                            <td>
-                                <%= mempool[i].signature %>
-                            </td>
-                            <td>
-                              <form action="/addtoblock" method="POST">
-                                <input type="hidden" name="transaction" value= "<%= i %>" />
-                                  <button type="submit" name="insert">Insert</button>
-                              </form>
+                            <td colspan="6">
+                                Empty
                             </td>
                         </tr>
                     <% } %>
-                <% } %>
-                <% if (mempool.length == 0) { %>
-                    <tr>
-                        <td colspan="7">
-                            Empty
-                        </td>
-                    </tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-    <div id="miner">
-    <form action="/miner" method="post">
-        <h2>Miner</h2>
-        Block #
-        <input name="block" type="text" class="form-control" placeholder="Block #" autofocus="true"/>
-        Nonce
-        <input name="nonce" type="text" class="form-control" placeholder="<%= nonce || 'nonce' %>"/>
-
-        <div style="text-align:center;margin-bottom:10px;margin-top:15px">
-          <h4>Transactions</h4>
-          <table id="transactions" class="table table-hover table-bordered text-table">
-              <thead>
-                  <tr>
-                      <th scope="col">Tx Nr</th>
-                      <th scope="col">Amount</th>
-                      <th scope="col">Fee</th>
-                      <th scope="col">From</th>
-                      <th scope="col">To</th>
-                      <th scope="col">Signature</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <% if (transactions.length > 0) { %>
-                      <% for (var i = 0; i < transactions.length; i++){ %>
-                          <tr>
-                              <td>
-                                  <%= transactions[i].TxNr %>
-                              </td>
-                              <td>
-                                  <%= transactions[i].amount %>
-                              </td>
-                              <td>
-                                  <%= transactions[i].fee %>
-                              </td>
-                              <td>
-                                  <%= transactions[i].from %>
-                              </td>
-                              <td>
-                                  <%= transactions[i].to %>
-                              </td>
-                              <td>
-                                  <%= transactions[i].signature %>
-                              </td>
-                          </tr>
-                      <% } %>
-                  <% } %>
-                  <% if (transactions.length == 0) { %>
-                      <tr>
-                          <td colspan="6">
-                              Empty
-                          </td>
-                      </tr>
-                  <% } %>
-              </tbody>
-          </table>
-        </div>
-        Previous block hash
-        <input name="prev" type="text" class="form-control" placeholder="Previous block hash"/>
-        Block hash
-        <input name="hash" type="text" class="form-control" disabled placeholder="<%= hash || 'Block hash' %>"/>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Mine</button>
-    </form>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="${contextPath}/resources/js/bootstrap.min.js"></script>
-</body>
-<style>
-input{
-  margin-bottom: 15px
-}
-h2{
-  text-align: center
-}
-.container{
-  width:20%
-}
-</style>
-</html>
+                </tbody>
+            </table>
+          </div>
+          Previous block hash
+          <input name="prev" type="text" class="form-control" placeholder="Previous block hash"/>
+          Block hash
+          <input name="hash" type="text" class="form-control" disabled placeholder="<%= hash || 'Block hash' %>"/>
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Mine</button>
+      </form>
+      <script>
+      </script>
+  </body>
