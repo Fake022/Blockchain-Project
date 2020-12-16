@@ -28,9 +28,8 @@ worker.port.onmessage = event => {
 
 function handleMessageFromPort(data) {
     console.log(`This message is meant only for user with id: ${id}`);
-    var data = JSON.parse(data);
     console.log(data);
-    if (data.list_user !== undefined) {
+    if (typeof data.list_user !== 'undefined') {
       saveList(data);
     }
 }
@@ -50,7 +49,7 @@ broadcastChannel.addEventListener("message", event => {
 
 function  handleBroadcast(data) {
   console.log("This message is meant for everyone!");
-  console.log(data);
+  console.log(data.data);
   if (typeof data.data.list_user !== 'undefined') {
     saveList(data.data);
   }

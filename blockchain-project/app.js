@@ -61,6 +61,7 @@ app.use('/', WalletRoutes);
 app.use('/', NodeRoutes);
 app.use('/', EconomyRoutes);
 
+var mempool1 = new Mempool();
 
 const getUniqueID = () => {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -83,8 +84,20 @@ function addEmailToList(email) {
 }
 
 function checkTransaction() {
-
+  var response = mempool1.updateNode();
+  if (response == "updated") {
+    return response;
+  }
 }
+
+app.ws('/new_transaction', (req, res)=> {
+  var response = checkTransaction();
+  if (response == "updated") {
+    expressWs.getWss().clients.forEach(client => {
+      client.send(JSON.stringify({message: "New Transaction gossip"}));
+    });
+  }
+});
 
 app.ws('/', (ws, req) => {
   var userID = getUniqueID();
@@ -92,19 +105,18 @@ app.ws('/', (ws, req) => {
   console.log('connected: ' + userID);
   addEmailToList(req.session.email);
   console.log('List user : ' + allUser);
-  checkTransaction();
   ws.on('message', function (message) {
     console.log(message);
     if (message == "get_user_list") {
+      console.log('test');
       expressWs.getWss().clients.forEach(client => {
-        client.send(JSON.stringify({list_user: allUser.length}))
+        client.send(JSON.stringify({list_user: allUser.length}));
       });
     }
   });
   setInterval(function timeout() {
       ws.pong("heartbeat");
     }, 500);
-
 });
 
 

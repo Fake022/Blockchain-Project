@@ -13,7 +13,7 @@ exports.generate_keys = function(req, res) {
 };
 
 exports.save_keys = async function (req, res) {
-    if (req.body ==! null || req.body !== undefined ) {
+    if (typeof req.body !== 'undefined') {
         console.log(req.body);
         var user = await models.User.findOne({
             where: { email: req.session.email }
@@ -48,7 +48,7 @@ exports.wallet_page = function (req, res) {
 };
 
 exports.wallet_transaction = async function (req, res) {
-    if (req.body ==! null || req.body !== undefined ) {
+    if (typeof req.body !== 'undefined') {
         var user = await models.User.findOne({
             where: { email: req.session.email }
         });
@@ -72,7 +72,7 @@ function calculateHash(value){
 }
 
 exports.wallet_sign_transaction = async function (req, res) {
-    if (req.body ==! null || req.body ==! undefined ) {
+    if (typeof req.body !== 'undefined') {
         var user = await models.User.findOne({
             where: { email: req.session.email }
         });
@@ -89,12 +89,13 @@ exports.wallet_sign_transaction = async function (req, res) {
         const hashTx = calculateHash(req.body);
         const sig = ec.sign(hashTx, wallet.privateKey,{canonical: true});
         const signature = sig.toDER('hex');
+        console.log(signature);
         res.end(JSON.stringify({code: 200, body: signature}));
     }
 };
 
 exports.wallet_send_node = function (req, res) {
-    if (req.body ==! null || req.body !== undefined ) {
+    if (typeof req.body !== 'undefined') {
 
     }
 };

@@ -30,27 +30,29 @@
                 </div>
           </div>
       </nav>
-      <%- include('component/sidebar/sidebar.ejs', {active_index: null, active_miner: null, active_wallet: null, active_economy: null, active_node: "active"}) %>
-   <div class="network">
-     <div class="button-netwok">
-      <button type="button" class="btn btn-primary" onclick="JoinNetwork()">Join Network</button>
-     </div>
+      <%- include('../component/sidebar/sidebar.ejs', {active_index: null, active_miner: null, active_wallet: null, active_economy: null, active_node: "active"}) %>
+   <div class="transaction">
       <div class="card-body">
         <div class="table-responsive">
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">NODE NR</th>
-                <th scope="col">BLOCKCHAIN LENGHT</th>
+                <th scope="col">Tx Nr</th>
+                <th scope="col">AMOUNT</th>
+                <th scope="col">FEE</th>
+                <th scope="col">FROM</th>
+                <th scope="col">TO</th>
+                <th scope="col">SIGNATURE</th>
+                <th scope="col">INSERT TRANSACTION INTO NEW BLOCK TO BE MINED</th>
               </tr>
             </thead>
-            <tbody id="network-list">
+            <tbody id="transaction-list">
             </tbody>
           </table>
         </div>
       </div>
   </div>
-    <script src="/javascripts/"></script>
+    <script src="/javascripts/transaction.js"></script>
 </body>
 <footer>
 </footer>

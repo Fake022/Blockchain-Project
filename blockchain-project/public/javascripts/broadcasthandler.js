@@ -20,6 +20,7 @@ worker.port.onmessage = event => {
 };
 
 function  handleMessageFromPort(data) {
+
     console.log(`This message is meant only for user with id: ${id}`);
     console.log(data);
 }

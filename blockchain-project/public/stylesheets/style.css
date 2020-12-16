@@ -88,6 +88,13 @@ body {
   text-transform: uppercase;
 }
 
+.transaction{
+  position: absolute;
+  margin-top: 1%;
+  width: 80%;
+  left: 20%;
+}
+
 h5.h5-transaction{
   vertical-align : top;
   margin-left : 44%; 

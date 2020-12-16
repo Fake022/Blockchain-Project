@@ -13,6 +13,8 @@ function heartbeat() {
 }
 
 ws.onmessage  = ({ data }) => {
+    console.log('test');
+    console.log(data);
     const parsedData = { data: JSON.parse(data), type: "message" }
     if (!parsedData.data.from) {
       console.log(parsedData);
@@ -28,7 +30,6 @@ onconnect = e => {
         idToPortMap[msg.data.from] =  port;
           console.log(msg.data.data);
           ws.send(msg.data.data);
-          console.log(msg);
           port.postMessage({ state: ws.msreadyState, type: "WSState"});
     };
 };
