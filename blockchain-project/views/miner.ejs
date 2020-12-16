@@ -94,33 +94,40 @@
       <input id="prev" name="prev" type="text" class="form-control" placeholder="Previous block hash"/>
       Block hash
       <input id="hash" name="hash" type="text" class="form-control" disabled placeholder="<%= hash || 'Block hash' %>"/>
-      <button class="btn btn-lg btn-primary btn-block" role="button" type="submit" onclick="Mine()">Mine</button>
+      <button id="mine" class="btn btn-lg btn-primary btn-block" role="button" type="submit" onclick="Mine()">Mine</button>
+      <button id="send" class="btn btn-lg btn-primary btn-block" role="button" type="submit" onclick="Send()" disabled>Send to Network</button>
       <script>
-      function Mine() {
-        var block = document.getElementById('block').value;
-        var prev = document.getElementById('prev').value;
-        const uri = 'http://localhost:8000/miner/mine';
-        const initDetails = {
-          method: 'post',
-          body: JSON.stringify({
-            block: block,
-            prev: prev,
-            transactions: transactions
-          }),
-          headers: {"Content-Type": "application/json"}
-        }
-        console.log(initDetails.body);
-        fetch(uri, initDetails).then(response => {
-          if (response.status == 200) {
-           return response.json();
-          } else {
-            console.log('Error Mine: something went wrong ...');
+        function Mine() {
+          var block = document.getElementById('block').value;
+          var prev = document.getElementById('prev').value;
+          const uri = 'http://localhost:8000/miner/mine';
+          const initDetails = {
+            method: 'post',
+            body: JSON.stringify({
+              block: block,
+              prev: prev,
+              transactions: transactions
+            }),
+            headers: {"Content-Type": "application/json"}
           }
-        }).then(res => {
-           console.log("then: ", res);
-           document.getElementById('nonce').value = res.nonce;
-           document.getElementById('hash').value = res.hash;
-         })
-      }
+          console.log(initDetails.body);
+          fetch(uri, initDetails).then(response => {
+            if (response.status == 200) {
+             return response.json();
+            } else {
+              console.log('Error Mine: something went wrong ...');
+            }
+          }).then(res => {
+            console.log("then: ", res);
+            document.getElementById('nonce').value = res.nonce;
+            document.getElementById('hash').value = res.hash;
+            let send = document.getElementById('send');
+            if (send.hasAttribute('disabled'))
+              send.removeAttribute('disabled');
+           })
+        }
+        function Send() {
+          // send to network;
+        }
       </script>
   </body>

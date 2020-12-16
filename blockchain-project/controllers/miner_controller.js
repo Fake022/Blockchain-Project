@@ -39,3 +39,7 @@ exports.mine = (req, res) => {
     console.log("final hash:" +  hash + "\nnonce: " + nonce);
     res.status(200).send({hash: hash, nonce: nonce});
 };
+
+exports.send = (req, res) => {
+    console.log("send");
+}
