@@ -74,8 +74,8 @@
         headers: {
            "Content-Type": "application/json; charset=utf-8"
         },
-        body: JSON.stringify({amount: amount, fee: fee, fromAddress: fromAddress, toAddress: toAddress})
-      }
+        body: JSON.stringify({amount: amount, fee: fee, fromAddress: fromAddress, toAddress: toAddress}),
+      };
       fetch(uri, initDetails).then(response => {
         if (response.status == '200')
         {
@@ -91,6 +91,7 @@
      }
 
      function sendNetwork() {
+      const uri = 'http://localhost:8000/wallet/transaction/sign';
 
      }
    </script>

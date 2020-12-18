@@ -10,17 +10,19 @@ const bcrypt = require('bcrypt');
 
 exports.miner_page = async (req, res) => {
     let email = req.session.email;
-    // var transactions =  await models.Transactions.find({
-    //     where: {user_id: user.id}
-    // });
-    var transactions = [{
-        TxNr: 1,
-        amount: 100,
-        fee: 10,
-        from: "fa7942e2ac45ae0294e2a414c64f7f53",
-        to: "766099e79c9a01b047f9ba6f789ab8b3",
-        signature: "d1ea59bf8f03b16c60fe26efeb7a359e"
-    }];
+    var transactions =  await models.Transaction.find({
+        where: {user_id: user.id}
+    });
+    // var transactions = [{
+    //     TxNr: 1,
+    //     amount: 100,
+    //     fee: 10,
+    //     from: "fa7942e2ac45ae0294e2a414c64f7f53",
+    //     to: "766099e79c9a01b047f9ba6f789ab8b3",
+    //     signature: "d1ea59bf8f03b16c60fe26efeb7a359e"
+    // }];
+    if (!transactions.find(transaction => transaction.coinbase === true))
+        transactions.push({TxNr: transactions.length + 1, amount: 1000, fee: 0, from: "SYSTEM", to: "me", signature: "signed", coinbase: true});
     res.render('miner', {user_email: email, transactions: transactions, hash: req.query.hash, nonce: req.query.nonce});
 };
 

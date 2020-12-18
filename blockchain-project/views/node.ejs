@@ -50,31 +50,7 @@
         </div>
       </div>
   </div>
-    <script>
-        function JoinNetwork() {
-            let socket = new WebSocket('ws://localhost:8000/');
-            socket.addEventListener('message', function (event) {
-              document.getElementById('network-list').innerHTML = '<tr>';
-              tmp = JSON.parse(event.data);
-              var list_user = tmp.list_user;
-              var userID = tmp.userID;
-              sessionStorage.setItem('userID', userID);
-              for (i = 0; i < list_user; i++) {
-                console.log(list_user);
-                console.log(i);
-                var tmp = document.getElementById('network-list').innerHTML;
-                console.log('test');
-                document.getElementById('network-list').innerHTML = tmp + '<td>NODE NR ' + i  + '</td><td>Blocks</td>';
-              }
-              var tmp = document.getElementById('network-list').innerHTML;
-              document.getElementById('network-list').innerHTML = tmp + '</tr>';
-            });
-        }
-
-        function heartbeat() {
-          setInterval(function(socket){ socket.send("heartbeat"); }, 500);
-        }
-    </script>
+    <script src="/javascripts/join_network.js"></script>
 </body>
 <footer>
 </footer>

@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Economy.init({
-    PublicKey: DataTypes.INTEGER,
-    Product: DataTypes.INTEGER,
+    PublicKey: DataTypes.STRING,
+    Product: DataTypes.STRING,
     Price: DataTypes.INTEGER
   }, {
     sequelize,

@@ -94,6 +94,13 @@ body {
     position: relative;
 }
 
+.transaction{
+  position: absolute;
+  margin-top: 1%;
+  width: 80%;
+  left: 20%;
+}
+
 h5.h5-transaction{
   vertical-align : top;
   margin-left : 44%;
@@ -120,6 +127,24 @@ h5.h5-transaction{
   top: 0%;
   margin: 0% 00% 0% 30%;
 
+}
+
+.alert-economy {
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  padding-top: 2%;
+  z-index: 100%;
+  left: 42%;
+}
+
+.notif-economy {
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  padding-top: 2%;
+  z-index: 100%;
+  left: 42%;
 }
 
 .mcd-menu li {

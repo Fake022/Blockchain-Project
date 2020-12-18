@@ -22,12 +22,17 @@ exports.page = async function(req, res) {
 
 exports.addList = async function(req, res) {
     if (req.body ==! null || req.body !== undefined ) {
-        var economy =  await models.economy.create({
-            PublicKey: req.body.publicKey,
-            Product: req.body.product,
-            Price: req.body.price,
-        });
-        res.end(JSON.stringify({message: "Economy block added successfuly !"}));
+        try {
+            console.log(req.body);
+            var economy =  await models.Economy.create({
+                PublicKey: req.body.publicKey,
+                Product: req.body.product,
+                Price: req.body.price,
+            });
+            res.end(JSON.stringify({message: "Economy block added successfuly !"}));
+        } catch (err) {
+            console.log(err);
+        }
     }
 };
 
@@ -35,7 +40,7 @@ exports.addList = async function(req, res) {
 
 exports.getList = async function(req, res) {
     if (req.body ==! null || req.body !== undefined ) {
-        var economy =  await models.economy.findAll();
+        var economy =  await models.Economy.findAll();
         res.end(JSON.stringify({economy: economy}));
     }
 };

@@ -1,4 +1,5 @@
 'use strict';
+var models = require('../../models');
 
 class Transaction {
     constructor(txNr, Amount, Fee, From, To, Signature) {
@@ -12,21 +13,35 @@ class Transaction {
 }
 
 module.exports = class Mempool {
-    constructor(txNr, Amount, Fee, From, To, Signature) {
-        this.list = [new Transaction(txNr, Amount, Fee, From, To, Signature)];
+    constructor() {
+        var transactions = this.init();
+        if (typeof transactions !== 'undefined' && transactions.length > 0) {
+            transactions.forEach(transaction => {
+                this.list = [new Transaction(transaction.txNr, transaction.Amount, transaction.Fee, transaction.From, transaction.To, transaction.Signature)];
+            });
+        }
     }
 
-    obtainLatestBlock() {
-        return this.list[this.list.length - 1];
+    async init() {
+       var list = await models.Transaction.findAll();
+        return list;
     }
 
-    addNewNode(txNr, Amount, Fee, From, To, Signature) {
-        newNode = this.obtainLatestBlock();
-        this.list.push(new Transaction(txNr, Amount, Fee, From, To, Signature));
+    updateNode() {
+        var response = "";
+        var transactions = this.init();
+        if (this.list.length  < transactions.length) {
+            transactions.forEach(transaction => {
+                this.list = [new Transaction(transaction.txNr, transaction.Amount, transaction.Fee, transaction.From, transaction.To, transaction.Signature)];
+            });
+            response = "updated"
+            return response;
+        }
+        response = "samelist";
+        return response;
     }
 
     getAllList() {
         return this.list;
     }
-
 }
