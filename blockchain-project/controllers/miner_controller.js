@@ -5,13 +5,17 @@ var path = require('path');
 var session = require('express-session');
 var models = require('../models');
 var Sequelize = require('sequelize');
+const fetch = require('node-fetch');
 const crypto = require("crypto");
 const bcrypt = require('bcrypt');
 
 exports.miner_page = async (req, res) => {
     let email = req.session.email;
-    var transactions =  await models.Transaction.find({
-        where: {user_id: user.id}
+    var user = await models.User.findOne({
+        where: { email: req.session.email }
+    });
+    var transactions =  await models.Transaction.findAll({
+        // where: { user_id: user.id }
     });
     // var transactions = [{
     //     TxNr: 1,
@@ -21,6 +25,7 @@ exports.miner_page = async (req, res) => {
     //     to: "766099e79c9a01b047f9ba6f789ab8b3",
     //     signature: "d1ea59bf8f03b16c60fe26efeb7a359e"
     // }];
+    console.log(transactions);
     if (!transactions.find(transaction => transaction.coinbase === true))
         transactions.push({TxNr: transactions.length + 1, amount: 1000, fee: 0, from: "SYSTEM", to: "me", signature: "signed", coinbase: true});
     res.render('miner', {user_email: email, transactions: transactions, hash: req.query.hash, nonce: req.query.nonce});
@@ -43,5 +48,23 @@ exports.mine = (req, res) => {
 };
 
 exports.send = (req, res) => {
-    console.log("send");
+    const uri = 'http://localhost:8000/node/new_block';
+    var initDetails = {
+        method: 'post',
+        body: JSON.stringify(req.body),
+        headers: {"Content-Type": "application/json"}
+    }
+    console.log(initDetails.body);
+
+    fetch(uri, initDetails).then(response => {
+    if (response.status == 200) {
+        return response.json();
+    } else {
+        console.log('Error Send: something went wrong ...');
+        res.status(400).end();
+    }
+    }).then(res => {
+        console.log("sent");
+        res.status(200).end();
+    })
 }

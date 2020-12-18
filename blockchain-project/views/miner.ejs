@@ -127,7 +127,32 @@
            })
         }
         function Send() {
-          // send to network;
+          var block = document.getElementById('block').value;
+          var nonce = document.getElementById('nonce').value;
+          var prev = document.getElementById('prev').value;
+          var hash = document.getElementById('hash').value;
+          const uri = 'http://localhost:8000/miner/send';
+          const initDetails = {
+            method: 'post',
+            body: JSON.stringify({
+              block: block,
+              nonce: nonce,
+              prev: prev,
+              hash: hash,
+              transactions: transactions
+            }),
+            headers: {"Content-Type": "application/json"}
+          }
+          console.log(initDetails.body);
+          fetch(uri, initDetails).then(response => {
+            if (response.status == 200) {
+             return response.json();
+            } else {
+              console.log('Error Send: something went wrong ...');
+            }
+          }).then(res => {
+            console.log("sent");
+           })
         }
       </script>
   </body>
