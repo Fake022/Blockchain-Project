@@ -61,13 +61,18 @@ app.use('/', WalletRoutes);
 app.use('/', NodeRoutes);
 app.use('/', EconomyRoutes);
 
-var mempool1 = new Mempool();
+init_mempool();
+
+async function init_mempool() {
+  var mempool = new Mempool();
+  await mempool.init()
+  mempool1 = mempool;
+}
 
 const getUniqueID = () => {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
   return s4() + s4() + '-' + s4();
 };
-
 
 function addUserToList(userID) {
   allUser.push(userID);
@@ -83,21 +88,12 @@ function addEmailToList(email) {
   });
 }
 
-function checkTransaction() {
-  var response = mempool1.updateNode();
-  if (response == "updated") {
-    return response;
-  }
+async function checkTransaction() {
+  var list = await mempool1.updateNode();
+  console.log(list);
+  return list;
 }
 
-app.ws('/new_transaction', (req, res)=> {
-  var response = checkTransaction();
-  if (response == "updated") {
-    expressWs.getWss().clients.forEach(client => {
-      client.send(JSON.stringify({message: "New Transaction gossip"}));
-    });
-  }
-});
 
 app.ws('/', (ws, req) => {
   var userID = getUniqueID();
@@ -106,17 +102,26 @@ app.ws('/', (ws, req) => {
   addEmailToList(req.session.email);
   console.log('List user : ' + allUser);
   ws.on('message', function (message) {
-    console.log(message);
+    console.log('received command');
     if (message == "get_user_list") {
-      console.log('test');
       expressWs.getWss().clients.forEach(client => {
         client.send(JSON.stringify({list_user: allUser.length}));
       });
     }
+    if (message == "get_transaction") {
+      var list_transaction = mempool1.getCurrentList();
+      if (list_transaction !== null) {
+        console.log(list_transaction);
+        expressWs.getWss().clients.forEach(client => {
+          client.send(JSON.stringify({list_transaction}));
+        });
+      }
+    }
   });
-  setInterval(function timeout() {
-      ws.pong("heartbeat");
-    }, 500);
+
+//  setInterval(function timeout() {
+//      ws.pong("heartbeat");
+//    }, 2500);
 });
 
 

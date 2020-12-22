@@ -8,9 +8,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      txNr: {
-        type: Sequelize.INTEGER
-      },
       Amount: {
         type: Sequelize.INTEGER
       },

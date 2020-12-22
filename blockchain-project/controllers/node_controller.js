@@ -1,6 +1,6 @@
 'use strict';
 
-var Mempool = require('../module/Mempool/mempool');
+var models = require('../models');
 
 exports.network_page = function(req, res) {
     let email = req.session.email;
@@ -12,15 +12,17 @@ exports.get_all_block = function(req, res){
 };
 
 exports.add_new_transaction = async function(req, res){
-    if (typeof req.body ==! 'undefined') {
+    if (req.body !== null) {
         await models.Transaction.create({
-            txNr: req.body.txnr,
             Amount: req.body.amount,
             Fee: req.body.fee,
-            From: req.body.from,
-            To: req.body.to,
-            Signature: req.body.signature
+            From: req.body.fromAddress,
+            To: req.body.toAddress,
+            Signature: req.body.Signature,
         });
+        res.end(JSON.stringify({code : 200, message: "Transaction sucessful saved !"}));
+    } else {
+        res.end(JSON.stringify({code : 400, message: "Error : parameters was null"}));
     }
 };
 
@@ -38,5 +40,5 @@ exports.new_transaction = async function(req, res) {
 };
 
 exports.mempool_transaction = function(req, res) {
-    res.render('mempool_transaction', {});
+    res.render('node/mempool_transaction', {});
 };

@@ -1,7 +1,7 @@
 'use strict';
 var models = require('../../models');
 
-class Transaction {
+class Node {
     constructor(txNr, Amount, Fee, From, To, Signature) {
         this.txNr = txNr;
         this.Amount = Amount;
@@ -14,34 +14,51 @@ class Transaction {
 
 module.exports = class Mempool {
     constructor() {
-        var transactions = this.init();
-        if (typeof transactions !== 'undefined' && transactions.length > 0) {
-            transactions.forEach(transaction => {
-                this.list = [new Transaction(transaction.txNr, transaction.Amount, transaction.Fee, transaction.From, transaction.To, transaction.Signature)];
-            });
-        }
+        this.list = [];
     }
 
     async init() {
-       var list = await models.Transaction.findAll();
-        return list;
-    }
-
-    updateNode() {
-        var response = "";
-        var transactions = this.init();
-        if (this.list.length  < transactions.length) {
-            transactions.forEach(transaction => {
-                this.list = [new Transaction(transaction.txNr, transaction.Amount, transaction.Fee, transaction.From, transaction.To, transaction.Signature)];
+       var list = await models.Transaction.findAll().then((rows) => {
+           return rows.map((r) => {
+               return r.dataValues;
             });
-            response = "updated"
-            return response;
+        });
+        console.log(list.length);
+        if (typeof list !== 'undefined' && list.length > 0) {
+            list.forEach(transaction => {
+                this.list.push(new Node(transaction.txNr, transaction.Amount, transaction.Fee, transaction.From, transaction.To, transaction.Signature));
+            });
+            console.log(this.list);
         }
-        response = "samelist";
-        return response;
     }
 
-    getAllList() {
+    async updateNode() {
+        var new_list = await models.Transaction.findAll().then((rows) => {
+            return rows.map((r) => {
+                return r.dataValues;
+             });
+         });
+        if (typeof new_list !== 'undefined' && new_list.length > 0) {
+            new_list.forEach(transaction => {
+                this.list.push(new Node(transaction.txNr, transaction.Amount, transaction.Fee, transaction.From, transaction.To, transaction.Signature));
+            });
+        }
+        return this.list;
+    }
+
+    async checkNewNode() {
+        var new_list = await models.Transaction.findAll().then((rows) => {
+            return rows.map((r) => {
+                return r.dataValues;
+             });
+         });
+        if (list.length !== new_list.length) {
+            return true;
+        }
+        return false;
+    }
+
+    getCurrentList() {
         return this.list;
     }
 }

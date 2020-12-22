@@ -68,5 +68,4 @@ function  postMessageToWSServer(input) {
         data:  input
       });
     }
-    setTimeout(() =>  postMessageToWSServer("Initial message"), 2500);
 }
