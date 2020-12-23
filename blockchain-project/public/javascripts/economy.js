@@ -1,3 +1,4 @@
+
 setTimeout(getToEconomy, 500);
 
 function sendToEconomy() {
@@ -30,6 +31,22 @@ function sendToEconomy() {
     });
 }
 
+function listcmp(arg1, arg2) {
+
+  if (Object.prototype.toString.call(arg1) === Object.prototype.toString.call(arg2)){
+    if (Object.prototype.toString.call(arg1) === '[object Object]' || Object.prototype.toString.call(arg1) === '[object Array]' ){
+      if (Object.keys(arg1).length !== Object.keys(arg2).length ){
+        return false;
+      }
+      return (Object.keys(arg1).every(function(key){
+        return listcmp(arg1[key],arg2[key]);
+      }));
+    }
+    return (arg1===arg2);
+  }
+  return false;
+};
+
 function getToEconomy() {
     const uri = 'http://localhost:8000/economy/getList';
     const initDetails = {
@@ -48,16 +65,21 @@ function getToEconomy() {
          console.log(res);
          document.getElementById('economy-list').innerHTML = '<tr>';
          var list = res.economy;
+         var old_list = JSON.parse(localStorage.getItem('list_economy'));
+         if (listcmp(list, old_list) == false) {
+          document.getElementById('alert').style.display = "block";
+          setTimeout(function(){
+              document.getElementById('alert').style.display = "none";
+          }, 2000);
+         }
+         localStorage.setItem('list_economy', JSON.stringify(list));
          list.forEach(node => {
             var tmp = document.getElementById('economy-list').innerHTML;
             document.getElementById('economy-list').innerHTML =  tmp + '<td>'+ node.PublicKey + '</td>' +'<td>' + node.Product + '</td>' + '<td>' + node.Price + '</td>';
          })
          var tmp = document.getElementById('economy-list').innerHTML;
          document.getElementById('economy-list').innerHTML = tmp + '</tr>';
-         document.getElementById('alert').style.display = "block";
-         setTimeout(function(){
-             document.getElementById('alert').style.display = "none";
-         }, 2000);
+   
          setTimeout(getToEconomy, 1000);
     });
 }
