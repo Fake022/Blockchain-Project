@@ -2,7 +2,7 @@
   <head>
      <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blockchain Simulator</title>    
+    <title>Blockchain Simulator</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
     <link rel="stylesheet" href="/stylesheets/style.css">
@@ -10,7 +10,7 @@
       <nav class="navbar navbar-light bg-light p-3">
           <div class="d-flex col-12 col-md-3 col-lg-2 mb-2 mb-lg-0 flex-wrap flex-md-nowrap justify-content-between">
               <a class="navbar-brand" href="#">
-                  Blochain Dashboard
+                  Blockchain Dashboard
               </a>
               <button class="navbar-toggler d-md-none collapsed mb-3" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
@@ -31,10 +31,10 @@
           </div>
       </nav>
       <%- include('../component/sidebar/sidebar.ejs', {active_index: null, active_miner: null, active_wallet: null, active_economy: null, active_node: "active"}) %>
-   <div class="network">
-     <div class="button-netwok">
-      <button type="button" class="btn btn-primary" onclick="JoinNetwork()">Join Network</button>
-     </div>
+    <div class="network">
+      <!-- <div class="button-netwok">
+        <button type="button" class="btn btn-primary" onclick="JoinNetwork()">Join Network</button>
+      </div>
       <div class="card-body">
         <div class="table-responsive">
           <table class="table">
@@ -48,9 +48,48 @@
             </tbody>
           </table>
         </div>
-      </div>
-  </div>
-    <script src="/javascripts/"></script>
+      </div> -->
+      <div  style="margin-bottom:10px;margin-top:15px">
+        <table id="blockchain" class="table table-hover table-bordered text-table">
+          <thead>
+            <tr>
+              <th scope="col">Block #</th>
+              <th scope="col">Nonce</th>
+              <th scope="col">Previous</th>
+              <th scope="col">Hash</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (blocks.length > 0) { %>
+              <% for (var i = 0; i < blocks.length; i++){ %>
+                <tr>
+                  <td>
+                    <%= blocks[i].block %>
+                  </td>
+                  <td>
+                    <%= blocks[i].nonce %>
+                  </td>
+                  <td>
+                    <%= blocks[i].prev %>
+                  </td>
+                  <td>
+                    <%= blocks[i].hash %>
+                  </td>
+                </tr>
+                <% } %>
+                <% } %>
+                <% if (blocks.length == 0) { %>
+                  <tr>
+                    <td colspan="6">
+                      Empty
+                    </td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+    </div>
+  <script src="/javascripts/"></script>
 </body>
 <footer>
 </footer>

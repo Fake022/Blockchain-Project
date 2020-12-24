@@ -57,24 +57,25 @@ exports.mine = (req, res) => {
     res.status(200).send({hash: hash, nonce: nonce});
 };
 
-exports.send = (req, res) => {
-    const uri = 'http://localhost:8000/node/new_block';
-    var initDetails = {
-        method: 'post',
-        body: JSON.stringify(req.body),
-        headers: {"Content-Type": "application/json"}
+exports.send = async (req, res) => {
+    let email = req.session.email;
+    var user = await models.User.findOne({
+        where: { email: req.session.email }
+    });
+    var block = req.body;
+    block.user_id = user.id;
+    console.log(block);
+    var allBlocks = await models.Block.findAll();
+    for (let fblock of allBlocks) {
+        if (fblock.hash == block.hash) {
+            res.send("already found");
+            return;
+        }
     }
-    console.log(initDetails.body);
-
-    fetch(uri, initDetails).then(response => {
-    if (response.status == 200) {
-        return response.json();
+    if (req.body != null) {
+        await models.Block.create(block);
+        res.status(200).end();
     } else {
-        console.log('Error Send: something went wrong ...');
         res.status(400).end();
     }
-    }).then(res => {
-        console.log("sent");
-        res.status(200).end();
-    })
 }
