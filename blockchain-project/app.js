@@ -9,6 +9,7 @@ var AccountRoutes = require('./routes/account');
 var HomeRouter = require('./routes/home');
 var WalletRoutes = require('./routes/wallet');
 var NodeRoutes = require('./routes/node');
+var MinerRoutes = require('./routes/miner');
 var EconomyRoutes = require('./routes/economy');
 var app = express();
 const ws_id = require('./controllers/ws_idclient');
@@ -50,7 +51,7 @@ app.use('/', AccountRoutes);
 
 app.use(function(req, res, next) {
     if( req.session.email == null || req.session.email.length == 0 ){
-      res.redirect('/login'); 
+      res.redirect('/login');
     }
       else{
       next();
@@ -60,6 +61,7 @@ app.use(function(req, res, next) {
 app.use('/', HomeRouter);
 app.use('/', WalletRoutes);
 app.use('/', NodeRoutes);
+app.use('/', MinerRoutes);
 app.use('/', EconomyRoutes);
 
 init_mempool();

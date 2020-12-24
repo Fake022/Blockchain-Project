@@ -1,0 +1,158 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Simulator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script>
+      var transactions = '<%- JSON.stringify(transactions) %>';
+    </script>
+  </head>
+    <body>
+      <nav class="navbar navbar-light bg-light p-3">
+          <div class="d-flex col-12 col-md-3 col-lg-2 mb-2 mb-lg-0 flex-wrap flex-md-nowrap justify-content-between">
+              <a class="navbar-brand" href="#">
+                  Blockchain Dashboard
+              </a>
+              <button class="navbar-toggler d-md-none collapsed mb-3" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+          </div>
+          <div class="col-12 col-md-4 col-lg-2">
+              <input class="form-control form-control-dark" type="text" placeholder="Search" aria-label="Search">
+          </div>
+          <div class="col-12 col-md-5 col-lg-8 d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
+              <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                    Hello, <%= user_email %>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                  </ul>
+                </div>
+          </div>
+      </nav>
+      <%- include('component/sidebar/sidebar.ejs', {active_index: null, active_miner: "active", active_wallet: null, active_economy: null, active_node: null}) %>
+      <div id="miner" class="miner">
+        <h2>Miner</h2>
+        Block #
+        <input id="block" name="block" type="text" class="form-control" placeholder="Block #" autofocus="true"/>
+        Nonce
+        <input id="nonce" name="nonce" type="text" class="form-control" placeholder="<%= nonce || 'nonce' %>"/>
+
+        <div style="text-align:center;margin-bottom:10px;margin-top:15px">
+          <h4>Transactions</h4>
+          <table id="transactions" class="table table-hover table-bordered text-table">
+            <thead>
+                <tr>
+                    <th scope="col">Tx Nr</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Fee</th>
+                    <th scope="col">From</th>
+                    <th scope="col">To</th>
+                    <th scope="col">Signature</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (transactions.length > 0) { %>
+                    <% for (var i = 0; i < transactions.length; i++){ %>
+                        <tr>
+                            <td>
+                                <%= transactions[i].TxNr %>
+                            </td>
+                            <td>
+                                <%= transactions[i].amount %>
+                            </td>
+                            <td>
+                                <%= transactions[i].fee %>
+                            </td>
+                            <td>
+                                <%= transactions[i].from %>
+                            </td>
+                            <td>
+                                <%= transactions[i].to %>
+                            </td>
+                            <td>
+                                <%= transactions[i].signature %>
+                            </td>
+                        </tr>
+                    <% } %>
+                <% } %>
+                <% if (transactions.length == 0) { %>
+                    <tr>
+                        <td colspan="6">
+                            Empty
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+      </div>
+      Previous block hash
+      <input id="prev" name="prev" type="text" class="form-control" placeholder="Previous block hash"/>
+      Block hash
+      <input id="hash" name="hash" type="text" class="form-control" disabled placeholder="<%= hash || 'Block hash' %>"/>
+      <button id="mine" class="btn btn-lg btn-primary btn-block" role="button" type="submit" onclick="Mine()">Mine</button>
+      <button id="send" class="btn btn-lg btn-primary btn-block" role="button" type="submit" onclick="Send()" disabled>Send to Network</button>
+      <script>
+        function Mine() {
+          var block = document.getElementById('block').value;
+          var prev = document.getElementById('prev').value;
+          const uri = 'http://localhost:8000/miner/mine';
+          const initDetails = {
+            method: 'post',
+            body: JSON.stringify({
+              block: block,
+              prev: prev,
+              transactions: transactions
+            }),
+            headers: {"Content-Type": "application/json"}
+          }
+          console.log(initDetails.body);
+          fetch(uri, initDetails).then(response => {
+            if (response.status == 200) {
+             return response.json();
+            } else {
+              console.log('Error Mine: something went wrong ...');
+            }
+          }).then(res => {
+            console.log("then: ", res);
+            document.getElementById('nonce').value = res.nonce;
+            document.getElementById('hash').value = res.hash;
+            let send = document.getElementById('send');
+            if (send.hasAttribute('disabled'))
+              send.removeAttribute('disabled');
+           })
+        }
+        function Send() {
+          var block = document.getElementById('block').value;
+          var nonce = document.getElementById('nonce').value;
+          var prev = document.getElementById('prev').value;
+          var hash = document.getElementById('hash').value;
+          const uri = 'http://localhost:8000/miner/send';
+          const initDetails = {
+            method: 'post',
+            body: JSON.stringify({
+              block: block,
+              nonce: nonce,
+              prev: prev,
+              hash: hash,
+              transactions: transactions
+            }),
+            headers: {"Content-Type": "application/json"}
+          }
+          console.log(initDetails.body);
+          fetch(uri, initDetails).then(response => {
+            if (response.status == 200) {
+             return response.json();
+            } else {
+              console.log('Error Send: something went wrong ...');
+            }
+          }).then(res => {
+            console.log("sent");
+           })
+        }
+      </script>
+  </body>
