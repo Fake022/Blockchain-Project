@@ -4,7 +4,7 @@ let  webSocketState  =  WebSocket.CONNECTING;
 console.log(`Initializing the web worker for user: ${id}`);
 worker.port.start();
 
-function JoinNetwork() {  
+function JoinNetwork() {
   postMessageToWSServer("get_user_list");
 }
 

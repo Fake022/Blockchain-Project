@@ -17,7 +17,7 @@ ws.onmessage  = ({ data }) => {
     }
 };
 
-setInterval(() => { getNewTransaction(); }, 4500);
+setInterval(() => { getNewTransaction(); }, 2500);
 
 function getNewTransaction() {
   if (connected == true) {

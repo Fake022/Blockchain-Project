@@ -27,12 +27,10 @@ function sendToEconomy() {
         setTimeout(function(){
             document.getElementById('alert-send').style.display = "none";
         }, 2000);
-        
     });
 }
 
 function listcmp(arg1, arg2) {
-
   if (Object.prototype.toString.call(arg1) === Object.prototype.toString.call(arg2)){
     if (Object.prototype.toString.call(arg1) === '[object Object]' || Object.prototype.toString.call(arg1) === '[object Array]' ){
       if (Object.keys(arg1).length !== Object.keys(arg2).length ){

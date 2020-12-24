@@ -47,6 +47,21 @@ exports.wallet_page = function (req, res) {
     res.render('wallet_keys_generator', {user_email: req.session.email, publicKey:  publicKey, privateKey: privateKey});   
 };
 
+exports.wallet_getbalance = async function (req, res) {
+    if (typeof req.body !== 'undefined') {
+        var user = await models.User.findOne({
+            where: { email: req.session.email }
+        });
+        var wallet =  await models.Wallet.findOne({
+            where: {user_id: user.id}
+        });
+        if (wallet == undefined) {
+            res.end(JSON.stringify({code: 401, message:"Error : wallet undefined "}));
+        }
+        return res.end(JSON.stringify({code: 200, body: wallet.amount}));
+    }
+};
+
 exports.wallet_transaction = async function (req, res) {
     if (typeof req.body !== 'undefined') {
         var user = await models.User.findOne({
@@ -69,6 +84,30 @@ function calculateHash(value){
     var data = hash.update(value.fromAddress + value.toAddress + value.amount.toString(), 'utf-8');
     var hash_rslt = data.digest('hex');
 	return (hash_rslt);
+}
+
+exports.wallet_verif_sign = async function(req, res) {
+    try {
+        if (typeof req.body !== 'undefined') {
+            var publicKey = req.body.publicKey;
+            var amount = req.body.amount;
+            var from = req.body.from;
+            var to = req.body.to;
+            var signature = req.body.signature;
+            if(!signature || signature.length === 0) {
+                res.end(JSON.stringify({code: 200, body: "false"}));
+            }
+            const pK = ec.keyFromPublic(from, 'hex');
+            var hash = crypto.createHash('sha512');
+            var data = hash.update(from + to + amount.toString(), 'utf-8');
+            var hash_rslt = data.digest('hex');
+            var isValid = pK.verify(hash_rslt, signature);
+            res.end(JSON.stringify({code: 200, body: isValid}));
+        }
+    } catch (err) {
+        console.error(err);
+    }
+
 }
 
 exports.wallet_sign_transaction = async function (req, res) {
