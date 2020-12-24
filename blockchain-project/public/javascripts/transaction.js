@@ -125,11 +125,14 @@ function checklinediff(arg1, arg2) {
 
 function verifSignature(index) {
   const uri = 'http://localhost:8000/wallet/verifSign';
-  var amount  = document.getElementById('amount-' + index);
-  var fee  = document.getElementById('fee-' + index);
-  var from  = document.getElementById('from-' + index);
-  var to  = document.getElementById('to-' + index);
-  var signature  = document.getElementById('signature-' + index);
+  console.log(index);
+  var amount  = document.getElementById('amount-' + index).innerText;
+  var fee  = document.getElementById('fee-' + index).innerText;
+  var from  = document.getElementById('from-' + index).innerText;
+  var to  = document.getElementById('to-' + index).innerText;
+  var signature  = document.getElementById('signature-' + index).innerText;
+  console.log(from);
+  console.log(to);
   const initDetails = {
     method: 'post',
     headers: {
@@ -146,8 +149,8 @@ function verifSignature(index) {
     }
   }).then(res => {
     var verif_sign = JSON.parse(res.body);
-    var sign = document.getElementById('sign-' + index).innerText;
-    (verif_sign == "true") ? document.getElementById('button-' + index).innerHTML = '<td><div id="button-'+ index +'" class="button_send_mining"><button type="button" class="btn btn-success">OK</button></div></td>' : document.getElementById('button-' + index).innerHTML = '<td><div id="button-'+ index +'" class="button_send_mining"><button type="button" class="btn btn-danger">Not valid</button></div></td>';
+    console.log(verif_sign);
+    (verif_sign == true) ? document.getElementById('button-verif' + index).innerHTML = '<td><div id="button-verif'+ index +'" class="button_send_mining"><button type="button" class="btn btn-success">OK</button></div></td>' : document.getElementById('button-verif' + index).innerHTML = '<td><div id="button-'+ index +'" class="button_send_mining"><button type="button" class="btn btn-danger">Not valid</button></div></td>';
   });
 }
 
@@ -168,10 +171,11 @@ function saveList(data) {
     data.forEach(node => {
       var tmp = document.getElementById('transaction-list').innerHTML;
       i++;
-      document.getElementById('transaction-list').innerHTML =  tmp + '<td>'+ i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '>' + node.Fee + '</td>'  + '<td id="from-' + i + '>' + node.From + '</td>' + '<td id="to-' + i + '>' + node.To + '</td>' + '<td id="signature-' + i + '>' + node.Signature + '</td>' 
+      console.log(node.Fee);
+      document.getElementById('transaction-list').innerHTML =  tmp + '<td>'+ i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '">' + node.Fee + '</td>'  + '<td id="from-' + i + '">' + node.From + '</td>' + '<td id="to-' + i + '">' + node.To + '</td>' + '<td id="signature-' + i + '">' + node.Signature + '</td>' 
       + '<td><div id="button-'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifBalance('+ i +')">Check Balance</button></div></td>'
-      + '<td><div id="button-'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifSignature('+ i +')">Check Signature</button></div></td>'
-      + '<td><div id="button-'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Send To Mempool</button></div></td>';
+      + '<td><div id="button-verif'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifSignature('+ i +')">Check Signature</button></div></td>'
+      + '<td><div id="button-send'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Send To Mempool</button></div></td>';
    });
    var tmp = document.getElementById('transaction-list').innerHTML; 
    document.getElementById('transaction-list').innerHTML = tmp + '</tr>';
@@ -187,10 +191,10 @@ function saveList(data) {
       data.forEach(node => {
         var tmp = document.getElementById('transaction-list').innerHTML;
         if (parseInt(i) > parseInt(index)) {
-          document.getElementById('transaction-list').innerHTML =  tmp + '<td>'+ i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td>' + node.Fee + '</td>'  + '<td>' + node.From + '</td>' + '<td>' + node.To + '</td>' + '<td id="sign-"' + i + '>' + node.Signature + '</td>' 
+          document.getElementById('transaction-list').innerHTML =  tmp + '<td>'+ i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '">' + node.Fee + '</td>'  + '<td id="from-' + i + '">' + node.From + '</td>' + '<td id="to-' + i + '">' + node.To + '</td>' + '<td id="sign-' + i + '">' + node.Signature + '</td>' 
           + '<td><div id="button-'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifBalance('+ i +')">Check Balance</button></div></td>'
-          + '<td><div id="button-'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifSignature('+ i +')">Check Signature</button></div></td>'
-          + '<td><div id="button-'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Send To Mempool</button></div></td>';
+          + '<td><div id="button-verif'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifSignature('+ i +')">Check Signature</button></div></td>'
+          + '<td><div id="button-send'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Send To Mempool</button></div></td>';
         }
         i++;
       });

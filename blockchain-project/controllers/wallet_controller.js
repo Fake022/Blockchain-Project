@@ -89,6 +89,7 @@ function calculateHash(value){
 exports.wallet_verif_sign = async function(req, res) {
     try {
         if (typeof req.body !== 'undefined') {
+            var valid = "false";
             var publicKey = req.body.publicKey;
             var amount = req.body.amount;
             var from = req.body.from;
@@ -97,12 +98,15 @@ exports.wallet_verif_sign = async function(req, res) {
             if(!signature || signature.length === 0) {
                 res.end(JSON.stringify({code: 200, body: "false"}));
             }
-            const pK = ec.keyFromPublic(from, 'hex');
             var hash = crypto.createHash('sha512');
-            var data = hash.update(from + to + amount.toString(), 'utf-8');
-            var hash_rslt = data.digest('hex');
-            var isValid = pK.verify(hash_rslt, signature);
-            res.end(JSON.stringify({code: 200, body: isValid}));
+            let key = ec.keyFromPublic(from, 'hex');
+            var data = hash.update(from + to + String(amount), 'utf-8').digest('hex');
+            console.log('hash: '+ data);
+            console.log('publickey: '+ JSON.stringify(from));
+            console.log('signature: '+ JSON.stringify(signature));
+            valid = key.verify(data, signature);
+            console.log('valid: ' + valid);
+            res.end(JSON.stringify({code: 200, body: valid}));
         }
     } catch (err) {
         console.error(err);
