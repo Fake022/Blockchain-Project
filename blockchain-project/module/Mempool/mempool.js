@@ -28,7 +28,6 @@ module.exports = class Mempool {
             list.forEach(transaction => {
                 this.list.push(new Node(transaction.txNr, transaction.Amount, transaction.Fee, transaction.From, transaction.To, transaction.Signature));
             });
-            console.log(this.list);
         }
     }
 
@@ -39,9 +38,7 @@ module.exports = class Mempool {
              });
          });
         if (typeof new_list !== 'undefined' && new_list.length > 0) {
-            new_list.forEach(transaction => {
-                this.list.push(new Node(transaction.txNr, transaction.Amount, transaction.Fee, transaction.From, transaction.To, transaction.Signature));
-            });
+            this.list = new_list;
         }
         return this.list;
     }

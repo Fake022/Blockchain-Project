@@ -12,6 +12,7 @@ var NodeRoutes = require('./routes/node');
 var MinerRoutes = require('./routes/miner');
 var EconomyRoutes = require('./routes/economy');
 var app = express();
+const ws_id = require('./controllers/ws_idclient');
 const expressWs = require('express-ws')(app);
 var allUser = [];
 var allemail = [];
@@ -71,9 +72,12 @@ async function init_mempool() {
   mempool1 = mempool;
 }
 
-const getUniqueID = () => {
-  const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  return s4() + s4() + '-' + s4();
+async function getUniqueID(req) {
+  // UserId const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  //return s4() + s4() + '-' + s4();
+  var pbK = await ws_id.getPublicKey(req);
+  console.log(pbK);
+  return pbK;
 };
 
 function addUserToList(userID) {
@@ -91,19 +95,19 @@ function addEmailToList(email) {
 }
 
 async function checkTransaction() {
-  var list = await mempool1.updateNode();
-  console.log(list);
-  return list;
+  await mempool1.updateNode();
 }
 
 
 app.ws('/', (ws, req) => {
-  var userID = getUniqueID();
+  var userID = getUniqueID(req);
   addUserToList(userID);
   console.log('connected: ' + userID);
   addEmailToList(req.session.email);
   console.log('List user : ' + allUser);
+  checkTransaction();
   ws.on('message', function (message) {
+    checkTransaction();
     console.log('received command');
     if (message == "get_user_list") {
       expressWs.getWss().clients.forEach(client => {
@@ -113,17 +117,12 @@ app.ws('/', (ws, req) => {
     if (message == "get_transaction") {
       var list_transaction = mempool1.getCurrentList();
       if (list_transaction !== null) {
-        console.log(list_transaction);
         expressWs.getWss().clients.forEach(client => {
           client.send(JSON.stringify({list_transaction}));
         });
       }
     }
   });
-
-//  setInterval(function timeout() {
-//      ws.pong("heartbeat");
-//    }, 2500);
 });
 
 
