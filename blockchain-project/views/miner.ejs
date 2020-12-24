@@ -38,7 +38,7 @@
       <div id="miner" class="miner">
         <h2>Miner</h2>
         Block #
-        <input id="block" name="block" type="text" class="form-control" placeholder="Block #" autofocus="true"/>
+        <input id="block" name="block" type="text" class="form-control" value="<%= block %>" placeholder="Block #" autofocus="true"/>
         Nonce
         <input id="nonce" name="nonce" type="text" class="form-control" placeholder="<%= nonce || 'nonce' %>"/>
 
@@ -60,22 +60,22 @@
                     <% for (var i = 0; i < transactions.length; i++){ %>
                         <tr>
                             <td>
-                                <%= transactions[i].TxNr %>
+                                <%= transactions[i].id %>
                             </td>
                             <td>
-                                <%= transactions[i].amount %>
+                                <%= transactions[i].Amount %>
                             </td>
                             <td>
-                                <%= transactions[i].fee %>
+                                <%= transactions[i].Fee %>
                             </td>
                             <td>
-                                <%= transactions[i].from %>
+                                <%= transactions[i].From %>
                             </td>
                             <td>
-                                <%= transactions[i].to %>
+                                <%= transactions[i].To %>
                             </td>
                             <td>
-                                <%= transactions[i].signature %>
+                                <%= transactions[i].Signature %>
                             </td>
                         </tr>
                     <% } %>
@@ -91,11 +91,17 @@
         </table>
       </div>
       Previous block hash
-      <input id="prev" name="prev" type="text" class="form-control" placeholder="Previous block hash"/>
+      <input id="prev" name="prev" type="text" class="form-control" value="<%= prev %>" placeholder="Previous block hash"/>
       Block hash
       <input id="hash" name="hash" type="text" class="form-control" disabled placeholder="<%= hash || 'Block hash' %>"/>
       <button id="mine" class="btn btn-lg btn-primary btn-block" role="button" type="submit" onclick="Mine()">Mine</button>
       <button id="send" class="btn btn-lg btn-primary btn-block" role="button" type="submit" onclick="Send()" disabled>Send to Network</button>
+      <div class="alert-sent">
+        <div id="alert-sent" class="alert alert-success" style="display: none;" role="alert">
+            <img width="24" height="24" src="/images/send.png" />
+            Block sent successfully !
+        </div>
+      </div>
       <script>
         function Mine() {
           var block = document.getElementById('block').value;
@@ -146,13 +152,17 @@
           console.log(initDetails.body);
           fetch(uri, initDetails).then(response => {
             if (response.status == 200) {
-             return response.json();
+              let send = document.getElementById('send');
+              send.setAttribute('disabled', "");
+              document.getElementById('alert-sent').style.display = "block";
+              setTimeout(function(){
+                  document.getElementById('alert-sent').style.display = "none";
+              }, 2000);
+              console.log("sent");
             } else {
               console.log('Error Send: something went wrong ...');
             }
-          }).then(res => {
-            console.log("sent");
-           })
+          });
         }
       </script>
   </body>

@@ -11,6 +11,17 @@ const fetch = require('node-fetch');
 const crypto = require("crypto");
 const bcrypt = require('bcrypt');
 
+async function getTransactions(user) {
+    var transactions = await models.Transaction.findAll({
+        // where: { user_id: user.id }
+    });
+    var newTransactions = new Array();
+    for (let Tx of transactions) {
+        newTransactions.push(Tx.dataValues);
+    }
+    return (newTransactions);
+}
+
 exports.miner_page = async (req, res) => {
     let email = req.session.email;
     var user = await models.User.findOne({
@@ -19,25 +30,34 @@ exports.miner_page = async (req, res) => {
     var wallet = await models.Wallet.findOne({
         where: { user_id: user.id }
     })
-    var transactions =  await models.Transaction.findAll({
-        // where: { user_id: user.id }
-    });
-    // var transactions = [{
-    //     TxNr: 1,
-    //     amount: 100,
-    //     fee: 10,
-    //     from: "fa7942e2ac45ae0294e2a414c64f7f53",
-    //     to: "766099e79c9a01b047f9ba6f789ab8b3",
-    //     signature: "d1ea59bf8f03b16c60fe26efeb7a359e"
-    // }];
+    var blockchain = await models.Block.findAll({
+        where: { user_id: user.id }
+    })
+    var block = 0;
+    var prev = "0000000000000000000000000000000000000000000000000000000000000000";
+    for (let Bk of blockchain) {
+        if (Bk.block > block) {
+            block = Bk.block;
+            prev = Bk.hash;
+        }
+    }
+    block++;
+    var transactions =  await getTransactions(user);
     console.log(transactions);
     if (!transactions.find(transaction => transaction.coinbase === true)) {
         var hashTx = crypto.createHash('sha256').update("SYSTEM" + wallet.publicKey + "1000", 'utf-8').digest('hex');
         var sig = ec.sign(hashTx, wallet.privateKey, {canonical: true});
         var signature = sig.toDER('hex');
-        transactions.push({TxNr: transactions.length + 1, amount: 1000, fee: 0, from: "SYSTEM", to: wallet.publicKey, signature: signature, coinbase: true});
+        transactions.push({id: transactions.length + 1, Amount: 1000, Fee: 0, From: "SYSTEM", To: wallet.publicKey, Signature: signature, coinbase: true});
     }
-    res.render('miner', {user_email: email, transactions: transactions, hash: req.query.hash, nonce: req.query.nonce});
+    res.render('miner', {
+        user_email: email,
+        transactions: transactions,
+        block: block,
+        prev: prev,
+        hash: req.query.hash,
+        nonce: req.query.nonce
+    });
 };
 
 exports.mine = (req, res) => {
@@ -56,24 +76,25 @@ exports.mine = (req, res) => {
     res.status(200).send({hash: hash, nonce: nonce});
 };
 
-exports.send = (req, res) => {
-    const uri = 'http://localhost:8000/node/new_block';
-    var initDetails = {
-        method: 'post',
-        body: JSON.stringify(req.body),
-        headers: {"Content-Type": "application/json"}
+exports.send = async (req, res) => {
+    let email = req.session.email;
+    var user = await models.User.findOne({
+        where: { email: req.session.email }
+    });
+    var block = req.body;
+    block.user_id = user.id;
+    console.log(block);
+    var allBlocks = await models.Block.findAll();
+    for (let fblock of allBlocks) {
+        if (fblock.hash == block.hash) {
+            res.send("already found");
+            return;
+        }
     }
-    console.log(initDetails.body);
-
-    fetch(uri, initDetails).then(response => {
-    if (response.status == 200) {
-        return response.json();
+    if (req.body != null) {
+        await models.Block.create(block);
+        res.status(200).end();
     } else {
-        console.log('Error Send: something went wrong ...');
         res.status(400).end();
     }
-    }).then(res => {
-        console.log("sent");
-        res.status(200).end();
-    })
 }
