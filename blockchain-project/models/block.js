@@ -13,10 +13,10 @@ module.exports = (sequelize, DataTypes) => {
   };
   Block.init({
     block: DataTypes.INTEGER,
-    transactions: DataTypes.STRING,
+    transactions: DataTypes.TEXT,
     hash: DataTypes.STRING,
     prev: DataTypes.STRING,
-    nonce: DataTypes.INTEGER,
+    nonce: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Block',

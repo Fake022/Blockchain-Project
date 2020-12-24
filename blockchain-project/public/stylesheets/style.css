@@ -342,6 +342,19 @@ h5.h5-transaction{
   width: 30%;
 }
 
+.blockchain {
+  position: absolute;
+  left: 15%;
+  width: 100%;
+}
+
+.checkbutton {
+    left: -200px;
+    position: relative;
+    font-size: 16;
+    margin-right: -150px;
+}
+
 .economy {
   position: relative;
   margin-top: 7%;

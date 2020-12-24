@@ -82,7 +82,7 @@ exports.send = async (req, res) => {
         where: { email: req.session.email }
     });
     var block = req.body;
-    block.user_id = user.id;
+    block.user_id = 0;
     console.log(block);
     var allBlocks = await models.Block.findAll();
     for (let fblock of allBlocks) {

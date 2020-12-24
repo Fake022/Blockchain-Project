@@ -31,25 +31,9 @@
           </div>
       </nav>
       <%- include('../component/sidebar/sidebar.ejs', {active_index: null, active_miner: null, active_wallet: null, active_economy: null, active_node: "active"}) %>
-    <div class="network">
-      <!-- <div class="button-netwok">
-        <button type="button" class="btn btn-primary" onclick="JoinNetwork()">Join Network</button>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">NODE NR</th>
-                <th scope="col">BLOCKCHAIN LENGHT</th>
-              </tr>
-            </thead>
-            <tbody id="network-list">
-            </tbody>
-          </table>
-        </div>
-      </div> -->
+    <div class="blockchain">
       <div  style="margin-bottom:10px;margin-top:15px">
+        <h2>Personal Blockchain</h2>
         <table id="blockchain" class="table table-hover table-bordered text-table">
           <thead>
             <tr>
@@ -88,8 +72,142 @@
                 </tbody>
               </table>
             </div>
+      <div class="block-validation-list">
+        <h2>Blocks to verify</h2>
+        <% if (nblocks.length > 0) { %>
+          <% for (var j = 0; j < nblocks.length; j++) { %>
+            <% var transactions = JSON.parse(nblocks[j].transactions) %>
+            <div id="miner" class="">
+              Block #
+              <input id="block" name="block" type="text" class="form-control" disabled value="<%= nblocks[j].block %>"/>
+              Nonce
+              <input id="nonce" name="nonce" type="text" class="form-control" disabled value="<%= nblocks[j].nonce %>"/>
+              Previous block hash
+              <input id="prev" name="prev" type="text" class="form-control" disabled value="<%= nblocks[j].prev %>"/>
+              Block hash
+              <input id="hash" name="hash" type="text" class="form-control" disabled value="<%= nblocks[j].hash %>"/>
+              <div style="text-align:center;margin-bottom:10px;margin-top:15px">
+                <h4>Transactions</h4>
+                <table id="transactions" class="table table-hover table-bordered text-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Tx Nr</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Fee</th>
+                      <th scope="col">From</th>
+                      <th scope="col">To</th>
+                      <th scope="col">Signature</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (transactions.length > 0) { %>
+                      <% for (var i = 0; i < transactions.length; i++){ %>
+                        <tr>
+                          <td>
+                            <%= transactions[i].id %>
+                          </td>
+                          <td>
+                            <%= transactions[i].Amount %>
+                          </td>
+                          <td>
+                            <%= transactions[i].Fee %>
+                          </td>
+                          <td>
+                            <%= transactions[i].From %>
+                          </td>
+                          <td>
+                            <%= transactions[i].To %>
+                          </td>
+                          <td>
+                            <%= transactions[i].Signature %>
+                          </td>
+                          </tr>
+                        <% } %>
+                      <% } %>
+                      <% if (transactions.length == 0) { %>
+                      <tr>
+                          <td colspan="6">
+                              Empty
+                          </td>
+                      </tr>
+                    <% } %>
+                  </tbody>
+                </table>
+                  Coinbase OK?
+                  <input id="<%= 'coinbaseOK' + j %>" name="coinbaseOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
+                  <br>
+                  <button id="<%= 'checksign' + j %>" class="checkbutton btn btn-lg btn-primary" role="button" type="submit" onclick="checksign('<%= j %>')">Check Signature</button>
+                  Signature OK?
+                  <input id="<%= 'signatureOK' + j %>" name="signatureOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
+                  <br>
+                  <button id="<%= 'checkbalans' + j %>" class="checkbutton btn btn-lg btn-primary" role="button" type="submit" onclick="checkbalans('<%= j %>')">Check Balance</button>
+                  Balance OK?
+                  <input id="<%= 'balanceOK' + j %>" name="balanceOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
+                  <br>
+                  Previous OK?
+                  <input id="<%= 'prevOK' + j %>" name="prevOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
+                  <br>
+                  <button id="<%= 'checkhash' + j %>" class="checkbutton btn btn-lg btn-primary" role="button" type="submit" onclick="checkhash('<%= j %>')">Check Hash</button>
+                  Hash OK?
+                  <input id="<%= 'hashOK' + j %>" name="hashOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
+                  <br>
+                  My approval
+                  <input id="<%= 'approvalOK' + j %>" name="approvalOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
+                  <br>
+                  <button id="<%= 'validate' + j %>" class="btn btn-lg btn-primary btn-block" role="button" onclick="Validate('<%= nblocks[j].hash %>')" disabled>Validate</button>
+              </div>
+            </div>
+          <% } %>
+        <% } %>
+      </div>
     </div>
   <script src="/javascripts/"></script>
+  <script>
+    function checkbox(j) {
+      var validate = document.getElementById('validate' + j)
+      var coinbaseOK = document.getElementById('coinbaseOK' + j);
+      var signatureOK = document.getElementById('signatureOK' + j);
+      var balanceOK = document.getElementById('balanceOK' + j);
+      var prevOK = document.getElementById('prevOK' + j);
+      var hashOK = document.getElementById('hashOK' + j);
+      var approvalOK = document.getElementById('approvalOK' + j);
+      if (coinbaseOK.checked && signatureOK.checked && balanceOK.checked && prevOK.checked && hashOK.checked && approvalOK.checked)
+        validate.removeAttribute('disabled');
+      else
+        validate.setAttribute('disabled', '');
+    }
+
+
+    function checksign(j) {
+      var button = document.getElementById('checksign' + j);
+    }
+
+    function checkbalans(j) {
+      var button = document.getElementById('checkbalans' + j);
+    }
+
+    function checkhash(j) {
+      var button = document.getElementById('checkhash' + j);
+    }
+
+    function Validate(hash) {
+      const uri = 'http://localhost:8000/node/verify_block';
+      const initDetails = {
+        method: 'post',
+        body: JSON.stringify({
+          hash: hash
+        }),
+        headers: {"Content-Type": "application/json"}
+      }
+      fetch(uri, initDetails).then(response => {
+        if (response.status == 200) {
+         return response.json();
+        } else {
+          console.log('Error Validate: something went wrong ...');
+        }
+      }).then(() => res.end());
+    }
+  </script>
 </body>
 <footer>
 </footer>

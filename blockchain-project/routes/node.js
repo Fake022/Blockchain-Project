@@ -9,4 +9,6 @@ router.post('/node/add_new_transaction', node_controller.add_new_transaction);
 router.get('/node/personal_blockchain', node_controller.personal_blockchain);
 router.get('/node/mempool_transaction', node_controller.mempool_transaction);
 
+router.post('/node/verify_block', node_controller.verify_block);
+
 module.exports = router;

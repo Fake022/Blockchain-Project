@@ -13,6 +13,17 @@ async function getBlocks(user) {
     return (newBlocks);
 }
 
+async function getNewBlocks(user) {
+    var nblocks = await models.Block.findAll({
+        where: { user_id: 0 }
+    })
+    var newBlocks = new Array();
+    for (let Bk of nblocks) {
+        newBlocks.push(Bk.dataValues);
+    }
+    return (newBlocks);
+}
+
 exports.network_page = function(req, res) {
     let email = req.session.email;
     res.render('node', {user_email: email});
@@ -40,11 +51,12 @@ exports.add_new_transaction = async function(req, res){
 exports.personal_blockchain = async function(req, res){
     let email = req.session.email;
     var user = await models.User.findOne({
-        where: { email: req.session.email }
+        where: { email: email }
     });
     var blocks = await getBlocks(user);
-    console.log(blocks);
-    res.render('node/personal_blockchain', {user_email: req.session.email, blocks: blocks});
+    var nblocks = await getNewBlocks();
+    console.log(blocks, nblocks);
+    res.render('node/personal_blockchain', {user_email: req.session.email, blocks: blocks, nblocks: nblocks});
 };
 
 exports.new_transaction = async function(req, res) {
@@ -59,3 +71,18 @@ exports.new_transaction = async function(req, res) {
 exports.mempool_transaction = function(req, res) {
     res.render('node/mempool_transaction', {});
 };
+
+exports.verify_block = async function(req, res) {
+    var email = req.session.email;
+    var hash = req.body.hash;
+    var user = await models.User.findOne({
+        where: { email: email }
+    });
+    var block = await models.Block.findOne({
+        where: { hash: hash }
+    });
+
+    block.user_id = user.id;
+    await block.save();
+    res.status(200).end();
+}
