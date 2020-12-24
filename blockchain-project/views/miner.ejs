@@ -96,6 +96,12 @@
       <input id="hash" name="hash" type="text" class="form-control" disabled placeholder="<%= hash || 'Block hash' %>"/>
       <button id="mine" class="btn btn-lg btn-primary btn-block" role="button" type="submit" onclick="Mine()">Mine</button>
       <button id="send" class="btn btn-lg btn-primary btn-block" role="button" type="submit" onclick="Send()" disabled>Send to Network</button>
+      <div class="alert-sent">
+        <div id="alert-sent" class="alert alert-success" style="display: none;" role="alert">
+            <img width="24" height="24" src="/images/send.png" />
+            Block sent successfully !
+        </div>
+      </div>
       <script>
         function Mine() {
           var block = document.getElementById('block').value;
@@ -146,13 +152,17 @@
           console.log(initDetails.body);
           fetch(uri, initDetails).then(response => {
             if (response.status == 200) {
-             return response.json();
+              let send = document.getElementById('send');
+              send.setAttribute('disabled', "");
+              document.getElementById('alert-sent').style.display = "block";
+              setTimeout(function(){
+                  document.getElementById('alert-sent').style.display = "none";
+              }, 2000);
+              console.log("sent");
             } else {
               console.log('Error Send: something went wrong ...');
             }
-          }).then(res => {
-            console.log("sent");
-           })
+          });
         }
       </script>
   </body>

@@ -4,7 +4,7 @@ var models = require('../models');
 
 async function getBlocks(user) {
     var blocks = await models.Block.findAll({
-        // where: { user_id: user.id }
+        where: { user_id: user.id }
     });
     var newBlocks = new Array();
     for (let Bk of blocks) {
