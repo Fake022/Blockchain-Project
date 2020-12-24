@@ -5,6 +5,8 @@ var path = require('path');
 var session = require('express-session');
 var models = require('../models');
 var Sequelize = require('sequelize');
+const EC = require('elliptic').ec;
+const ec = new EC('secp256k1');
 const fetch = require('node-fetch');
 const crypto = require("crypto");
 const bcrypt = require('bcrypt');
@@ -14,6 +16,9 @@ exports.miner_page = async (req, res) => {
     var user = await models.User.findOne({
         where: { email: req.session.email }
     });
+    var wallet = await models.Wallet.findOne({
+        where: { user_id: user.id }
+    })
     var transactions =  await models.Transaction.findAll({
         // where: { user_id: user.id }
     });
@@ -26,8 +31,12 @@ exports.miner_page = async (req, res) => {
     //     signature: "d1ea59bf8f03b16c60fe26efeb7a359e"
     // }];
     console.log(transactions);
-    if (!transactions.find(transaction => transaction.coinbase === true))
-        transactions.push({TxNr: transactions.length + 1, amount: 1000, fee: 0, from: "SYSTEM", to: "me", signature: "signed", coinbase: true});
+    if (!transactions.find(transaction => transaction.coinbase === true)) {
+        var hashTx = crypto.createHash('sha256').update("SYSTEM" + wallet.publicKey + "1000", 'utf-8').digest('hex');
+        var sig = ec.sign(hashTx, wallet.privateKey, {canonical: true});
+        var signature = sig.toDER('hex');
+        transactions.push({TxNr: transactions.length + 1, amount: 1000, fee: 0, from: "SYSTEM", to: wallet.publicKey, signature: signature, coinbase: true});
+    }
     res.render('miner', {user_email: email, transactions: transactions, hash: req.query.hash, nonce: req.query.nonce});
 };
 
