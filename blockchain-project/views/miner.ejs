@@ -38,7 +38,7 @@
       <div id="miner" class="miner">
         <h2>Miner</h2>
         Block #
-        <input id="block" name="block" type="text" class="form-control" placeholder="Block #" autofocus="true"/>
+        <input id="block" name="block" type="text" class="form-control" value="<%= block %>" placeholder="Block #" autofocus="true"/>
         Nonce
         <input id="nonce" name="nonce" type="text" class="form-control" placeholder="<%= nonce || 'nonce' %>"/>
 
@@ -91,7 +91,7 @@
         </table>
       </div>
       Previous block hash
-      <input id="prev" name="prev" type="text" class="form-control" placeholder="Previous block hash"/>
+      <input id="prev" name="prev" type="text" class="form-control" value="<%= prev %>" placeholder="Previous block hash"/>
       Block hash
       <input id="hash" name="hash" type="text" class="form-control" disabled placeholder="<%= hash || 'Block hash' %>"/>
       <button id="mine" class="btn btn-lg btn-primary btn-block" role="button" type="submit" onclick="Mine()">Mine</button>

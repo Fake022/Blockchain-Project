@@ -30,6 +30,18 @@ exports.miner_page = async (req, res) => {
     var wallet = await models.Wallet.findOne({
         where: { user_id: user.id }
     })
+    var blockchain = await models.Block.findAll({
+        where: { user_id: user.id }
+    })
+    var block = 0;
+    var prev = "0000000000000000000000000000000000000000000000000000000000000000";
+    for (let Bk of blockchain) {
+        if (Bk.block > block) {
+            block = Bk.block;
+            prev = Bk.hash;
+        }
+    }
+    block++;
     var transactions =  await getTransactions(user);
     console.log(transactions);
     if (!transactions.find(transaction => transaction.coinbase === true)) {
@@ -38,7 +50,14 @@ exports.miner_page = async (req, res) => {
         var signature = sig.toDER('hex');
         transactions.push({id: transactions.length + 1, Amount: 1000, Fee: 0, From: "SYSTEM", To: wallet.publicKey, Signature: signature, coinbase: true});
     }
-    res.render('miner', {user_email: email, transactions: transactions, hash: req.query.hash, nonce: req.query.nonce});
+    res.render('miner', {
+        user_email: email,
+        transactions: transactions,
+        block: block,
+        prev: prev,
+        hash: req.query.hash,
+        nonce: req.query.nonce
+    });
 };
 
 exports.mine = (req, res) => {
