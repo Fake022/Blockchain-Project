@@ -60,22 +60,22 @@
                     <% for (var i = 0; i < transactions.length; i++){ %>
                         <tr>
                             <td>
-                                <%= transactions[i].TxNr %>
+                                <%= transactions[i].id %>
                             </td>
                             <td>
-                                <%= transactions[i].amount %>
+                                <%= transactions[i].Amount %>
                             </td>
                             <td>
-                                <%= transactions[i].fee %>
+                                <%= transactions[i].Fee %>
                             </td>
                             <td>
-                                <%= transactions[i].from %>
+                                <%= transactions[i].From %>
                             </td>
                             <td>
-                                <%= transactions[i].to %>
+                                <%= transactions[i].To %>
                             </td>
                             <td>
-                                <%= transactions[i].signature %>
+                                <%= transactions[i].Signature %>
                             </td>
                         </tr>
                     <% } %>
