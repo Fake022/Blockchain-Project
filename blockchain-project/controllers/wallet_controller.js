@@ -44,7 +44,7 @@ exports.wallet_page = function (req, res) {
     const key = ec.genKeyPair();
     const publicKey = key.getPublic('hex');
     const privateKey = key.getPrivate('hex');
-    res.render('wallet_keys_generator', {user_email: req.session.email, publicKey:  publicKey, privateKey: privateKey});   
+    res.render('wallet_keys_generator', {user_email: req.session.email, publicKey:  publicKey, privateKey: privateKey});
 };
 
 exports.wallet_transaction = async function (req, res) {

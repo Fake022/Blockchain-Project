@@ -22,6 +22,7 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "mysql2": "^2.2.5",
+    "node-fetch": "^2.6.1",
     "node-gyp": "^7.1.2",
     "random-number-csprng": "^1.0.2",
     "secp256k1": "^4.0.2",
