@@ -2,6 +2,9 @@
 
 const { signatureExport } = require('secp256k1');
 var models = require('../models');
+const EC = require('elliptic').ec;
+const ec = new EC('secp256k1');
+const crypto = require("crypto");
 
 async function getBlocks(user) {
     var blocks = await models.Block.findAll({
@@ -56,7 +59,9 @@ exports.personal_blockchain = async function(req, res){
     });
     var blocks = await getBlocks(user);
     var nblocks = await getNewBlocks();
-    console.log(blocks, nblocks);
+    for (let bk of nblocks)
+        bk.transactions = JSON.parse(bk.transactions);
+    console.log(nblocks);
     res.render('node/personal_blockchain', {user_email: req.session.email, blocks: blocks, nblocks: nblocks});
 };
 

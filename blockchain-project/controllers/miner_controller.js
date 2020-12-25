@@ -63,9 +63,9 @@ exports.miner_page = async (req, res) => {
 exports.mine = (req, res) => {
     console.log("body: ", req.body);
     var nonce = 0;
-    var block = JSON.stringify(req.body);
+    var block = req.body;
     for (let i = 0; ; i++) {
-        let toHash = block + i;
+        let toHash = block.block + block.transactions + block.prev + i;
         var hash = crypto.createHash("sha256").update(toHash).digest("hex");
         if (hash.startsWith("00")) {
             nonce = i;
