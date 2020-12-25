@@ -189,12 +189,12 @@ function sendToMempool(index, data) {
 function saveList(data) {
   local_list = JSON.parse(localStorage.getItem('transaction_list'));
 
-  if (document.getElementById('transaction-list') == null && local_list !== 'undefined') {
-    console.log('clear');
+  if (document.getElementById('transaction-list').innerText === "" && local_list !== null) {
     localStorage.clear();
   }
   console.log(local_list);
-  if (local_list == null) {
+  console.log(document.getElementById('transaction-list').innerText);
+  if (document.getElementById('transaction-list').innerText === "" || local_list == null) {
     var i = 1;
     document.getElementById('transaction-list').innerHTML = '';
     data.forEach(node => {
