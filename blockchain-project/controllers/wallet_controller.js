@@ -111,7 +111,6 @@ exports.wallet_verif_sign = async function(req, res) {
     } catch (err) {
         console.error(err);
     }
-
 }
 
 exports.wallet_sign_transaction = async function (req, res) {
@@ -134,11 +133,5 @@ exports.wallet_sign_transaction = async function (req, res) {
         const signature = sig.toDER('hex');
         console.log(signature);
         res.end(JSON.stringify({code: 200, body: signature}));
-    }
-};
-
-exports.wallet_send_node = function (req, res) {
-    if (typeof req.body !== 'undefined') {
-
     }
 };

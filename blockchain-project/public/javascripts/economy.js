@@ -77,7 +77,6 @@ function getToEconomy() {
          })
          var tmp = document.getElementById('economy-list').innerHTML;
          document.getElementById('economy-list').innerHTML = tmp + '</tr>';
-   
          setTimeout(getToEconomy, 1000);
     });
 }

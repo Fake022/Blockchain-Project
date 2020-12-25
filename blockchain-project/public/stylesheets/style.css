@@ -94,6 +94,19 @@ body {
     position: relative;
 }
 
+.mempool-table {
+  position: relative;
+  margin-top: 5%;
+  left: 25%;
+  width: 70%;
+}
+
+.Title{
+  top: 7%;
+  left: 47%;
+  position: relative;
+}
+
 .transaction{
   position: absolute;
   margin-top: 1%;

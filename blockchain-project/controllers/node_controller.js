@@ -1,5 +1,6 @@
 'use strict';
 
+const { signatureExport } = require('secp256k1');
 var models = require('../models');
 
 async function getBlocks(user) {
@@ -72,6 +73,39 @@ exports.mempool_transaction = function(req, res) {
     res.render('node/mempool_transaction', {});
 };
 
+exports.add_personnal_mempool = async function(req, res) {
+    try {
+        if (typeof req.body ==! 'undefined') {
+            let id = req.session.id;
+            await models.Usertransaction.create({
+                user_id: id,
+                Amount: amount,
+                Fee: fee,
+                From: from,
+                To: to,
+                Signature: signature,
+            });
+            res.end(JSON.stringify({code : 200, message: "Transaction sucessful saved !"}));
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+exports.get_personnal_mempool = async function(req, res) {
+    try {
+        let id = req.session.id;
+        let user_email = req.session.email;
+        var transactions = await models.Usertransaction.findAll({
+            where: {user_id: id},
+        });
+        console.log(transactions);
+        res.render('node/mempool_tobemined', {user_email: user_email, transactions: transactions});
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 exports.verify_block = async function(req, res) {
     var email = req.session.email;
     var hash = req.body.hash;
@@ -81,8 +115,7 @@ exports.verify_block = async function(req, res) {
     var block = await models.Block.findOne({
         where: { hash: hash }
     });
-
     block.user_id = user.id;
     await block.save();
     res.status(200).end();
-}
+};

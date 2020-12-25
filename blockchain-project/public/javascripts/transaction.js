@@ -3,6 +3,7 @@ const id = uuidv4();
 let  webSocketState  =  WebSocket.CONNECTING;
 console.log(`Initializing the web worker for user: ${id}`);
 worker.port.start();
+
 //checkTransaction();
 //
 //
@@ -52,7 +53,7 @@ function handleBroadcast(data) {
   saveList(data.data.list_transaction);
 }
 
-function  postMessageToWSServer(input) {
+function postMessageToWSServer(input) {
     if (webSocketState  ===  WebSocket.CONNECTING) {
       console.log("Still connecting to the server, try again later!");
     } else  if (
@@ -154,8 +155,30 @@ function verifSignature(index) {
   });
 }
 
-function sendToMining() {
-  
+function sendToMempool(index) {
+  const uri = 'http://localhost:8000/node/add_personnal_mempool';
+  var amount  = document.getElementById('amount-' + index).innerText;
+  var fee  = document.getElementById('fee-' + index).innerText;
+  var from  = document.getElementById('from-' + index).innerText;
+  var to  = document.getElementById('to-' + index).innerText;
+  var signature  = document.getElementById('signature-' + index).innerText;
+  const initDetails = {
+    method: 'post',
+    headers: {
+       "Content-Type": "application/json; charset=utf-8"
+    },
+    body: JSON.stringify({amount: amount, fee: fee, from: from, to: to, signature: signature})
+  };
+  fetch(uri, initDetails).then(response => {
+    if (response.status == '200') {
+      console.log(response);
+     return response.json();
+    } else  {
+      console.log('Error sendToMempoll : something went wrong ...');
+    }
+  }).then(res => {
+    document.getElementById('nb' + index) = '';
+  });
 }
 
 function saveList(data) {
@@ -172,10 +195,10 @@ function saveList(data) {
       var tmp = document.getElementById('transaction-list').innerHTML;
       i++;
       console.log(node.Fee);
-      document.getElementById('transaction-list').innerHTML =  tmp + '<td>'+ i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '">' + node.Fee + '</td>'  + '<td id="from-' + i + '">' + node.From + '</td>' + '<td id="to-' + i + '">' + node.To + '</td>' + '<td id="signature-' + i + '">' + node.Signature + '</td>' 
+      document.getElementById('transaction-list').innerHTML =  tmp + '<div id=nb"' + i + '">' + '<td>'+ i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '">' + node.Fee + '</td>'  + '<td id="from-' + i + '">' + node.From + '</td>' + '<td id="to-' + i + '">' + node.To + '</td>' + '<td id="signature-' + i + '">' + node.Signature + '</td>' 
       + '<td><div id="button-'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifBalance('+ i +')">Check Balance</button></div></td>'
       + '<td><div id="button-verif'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifSignature('+ i +')">Check Signature</button></div></td>'
-      + '<td><div id="button-send'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Send To Mempool</button></div></td>';
+      + '<td><div id="button-send'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Send To Mempool</button></div></td></div>';
    });
    var tmp = document.getElementById('transaction-list').innerHTML; 
    document.getElementById('transaction-list').innerHTML = tmp + '</tr>';
@@ -191,10 +214,10 @@ function saveList(data) {
       data.forEach(node => {
         var tmp = document.getElementById('transaction-list').innerHTML;
         if (parseInt(i) > parseInt(index)) {
-          document.getElementById('transaction-list').innerHTML =  tmp + '<td>'+ i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '">' + node.Fee + '</td>'  + '<td id="from-' + i + '">' + node.From + '</td>' + '<td id="to-' + i + '">' + node.To + '</td>' + '<td id="sign-' + i + '">' + node.Signature + '</td>' 
+          document.getElementById('transaction-list').innerHTML =  tmp + '<div id=nb"' + i + '">' + '<td >' + i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '">' + node.Fee + '</td>'  + '<td id="from-' + i + '">' + node.From + '</td>' + '<td id="to-' + i + '">' + node.To + '</td>' + '<td id="sign-' + i + '">' + node.Signature + '</td>' 
           + '<td><div id="button-'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifBalance('+ i +')">Check Balance</button></div></td>'
           + '<td><div id="button-verif'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifSignature('+ i +')">Check Signature</button></div></td>'
-          + '<td><div id="button-send'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Send To Mempool</button></div></td>';
+          + '<td><div id="button-send'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Send To Mempool</button></div></td></div>';
         }
         i++;
       });
