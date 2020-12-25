@@ -10,5 +10,8 @@ router.get('/node/personal_blockchain', node_controller.personal_blockchain);
 router.get('/node/mempool_transaction', node_controller.mempool_transaction);
 
 router.post('/node/verify_block', node_controller.verify_block);
+router.post('/node/checksign', node_controller.checksign);
+router.post('/node/checkbalans', node_controller.checkbalans);
+router.post('/node/checkhash', node_controller.checkhash);
 
 module.exports = router;

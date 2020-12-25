@@ -6,6 +6,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <script>
+      var nblocks = '<%- JSON.stringify(nblocks) %>';
+    </script>
+  </head>
     <body>
       <nav class="navbar navbar-light bg-light p-3">
           <div class="d-flex col-12 col-md-3 col-lg-2 mb-2 mb-lg-0 flex-wrap flex-md-nowrap justify-content-between">
@@ -76,7 +80,7 @@
         <h2>Blocks to verify</h2>
         <% if (nblocks.length > 0) { %>
           <% for (var j = 0; j < nblocks.length; j++) { %>
-            <% var transactions = JSON.parse(nblocks[j].transactions) %>
+            <% var transactions = nblocks[j].transactions %>
             <div id="miner" class="">
               Block #
               <input id="block" name="block" type="text" class="form-control" disabled value="<%= nblocks[j].block %>"/>
@@ -138,18 +142,18 @@
                   <br>
                   <button id="<%= 'checksign' + j %>" class="checkbutton btn btn-lg btn-primary" role="button" type="submit" onclick="checksign('<%= j %>')">Check Signature</button>
                   Signature OK?
-                  <input id="<%= 'signatureOK' + j %>" name="signatureOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
+                  <input id="<%= 'signatureOK' + j %>" name="signatureOK" disabled onclick="checkbox('<%= j %>')" type="checkbox"/>
                   <br>
                   <button id="<%= 'checkbalans' + j %>" class="checkbutton btn btn-lg btn-primary" role="button" type="submit" onclick="checkbalans('<%= j %>')">Check Balance</button>
                   Balance OK?
-                  <input id="<%= 'balanceOK' + j %>" name="balanceOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
+                  <input id="<%= 'balanceOK' + j %>" name="balanceOK" disabled onclick="checkbox('<%= j %>')" type="checkbox"/>
                   <br>
                   Previous OK?
                   <input id="<%= 'prevOK' + j %>" name="prevOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
                   <br>
                   <button id="<%= 'checkhash' + j %>" class="checkbutton btn btn-lg btn-primary" role="button" type="submit" onclick="checkhash('<%= j %>')">Check Hash</button>
                   Hash OK?
-                  <input id="<%= 'hashOK' + j %>" name="hashOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
+                  <input id="<%= 'hashOK' + j %>" name="hashOK" disabled onclick="checkbox('<%= j %>')" type="checkbox"/>
                   <br>
                   My approval
                   <input id="<%= 'approvalOK' + j %>" name="approvalOK" onclick="checkbox('<%= j %>')" type="checkbox"/>
@@ -179,15 +183,67 @@
 
 
     function checksign(j) {
-      var button = document.getElementById('checksign' + j);
+      var signButton = document.getElementById(`checksign${j}`);
+      var signatureOK = document.getElementById(`signatureOK${j}`);
+      var verif = "true";
+      var block = JSON.parse(nblocks)[j];
+      for (let tx of block.transactions) {
+        console.log(tx);
+        const uri = 'http://localhost:8000/wallet/verifSign';
+        const initDetails = {
+          method: 'post',
+          body: JSON.stringify({
+            publicKey: "",
+            amount: tx.Amount,
+            from: tx.From,
+            to: tx.To,
+            signature: tx.Signature
+          }),
+          headers: {"Content-Type": "application/json"}
+        }
+        fetch(uri, initDetails).then(response => {
+          if (response.status == 200) {
+            return response.text()
+          } else {
+            verif = "false"
+            console.log('Error checkSign: something went wrong ...');
+          }
+        }).then((res) => {verif = res});
+      }
+      if (verif == "true")
+        signatureOK.removeAttribute("disabled");
+        signButton.style["background-color"] = "lime";
+        signButton.innerText = "OK";
+        signButton.setAttribute("disabled", "");
     }
 
     function checkbalans(j) {
-      var button = document.getElementById('checkbalans' + j);
+      var button = document.getElementById(`checkbalans${j}`);
+      var balanceOK = document.getElementById(`balanceOK${j}`);
+      balanceOK.removeAttribute("disabled");
     }
 
     function checkhash(j) {
-      var button = document.getElementById('checkhash' + j);
+      const blocks = JSON.parse(nblocks);
+      const block = blocks[j];
+      const uri = 'http://localhost:8000/node/checkhash';
+      var checkhashButton = document.getElementById(`checkhash${j}`);
+      var hashOK = document.getElementById(`hashOK${j}`);
+      const initDetails = {
+        method: 'post',
+        body: JSON.stringify(block),
+        headers: {"Content-Type": "application/json"}
+      }
+      fetch(uri, initDetails).then(response => {
+        if (response.status == 200) {
+          checkhashButton.style["background-color"] = "lime";
+          checkhashButton.innerText = "OK";
+          checkhashButton.setAttribute("disabled", "");
+          hashOK.removeAttribute("disabled");
+        } else {
+          console.log('Error checkhash: something went wrong ...');
+        }
+      });
     }
 
     function Validate(hash) {
@@ -201,11 +257,11 @@
       }
       fetch(uri, initDetails).then(response => {
         if (response.status == 200) {
-         return response.json();
+          console.log("oke");
         } else {
           console.log('Error Validate: something went wrong ...');
         }
-      }).then(() => res.end());
+      });
     }
   </script>
 </body>
