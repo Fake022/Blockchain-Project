@@ -46,9 +46,7 @@ exports.miner_page = async (req, res) => {
     console.log(transactions);
     if (!transactions.find(transaction => transaction.coinbase === true)) {
         var hashTx = crypto.createHash('sha256').update("SYSTEM" + wallet.publicKey + "1000", 'utf-8').digest('hex');
-        var sig = ec.sign(hashTx, wallet.privateKey, {canonical: true});
-        var signature = sig.toDER('hex');
-        transactions.push({id: transactions.length + 1, Amount: 1000, Fee: 0, From: "SYSTEM", To: wallet.publicKey, Signature: signature, coinbase: true});
+        transactions.push({id: transactions.length + 1, Amount: 1000, Fee: 0, From: "SYSTEM", To: wallet.publicKey, Signature: "-", coinbase: true});
     }
     res.render('miner', {
         user_email: email,

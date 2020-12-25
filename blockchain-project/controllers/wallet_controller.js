@@ -95,7 +95,9 @@ exports.wallet_verif_sign = async function(req, res) {
             var from = req.body.from;
             var to = req.body.to;
             var signature = req.body.signature;
-            if(!signature || signature.length === 0) {
+            if (from === "SYSTEM")
+                res.end(JSON.stringify({code: 200, body: true}));
+            if (!signature || signature.length === 0) {
                 res.end(JSON.stringify({code: 200, body: "false"}));
             }
             var hash = crypto.createHash('sha512');
