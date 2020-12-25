@@ -1,6 +1,5 @@
 'use strict';
 
-const { signatureExport } = require('secp256k1');
 var models = require('../models');
 const EC = require('elliptic').ec;
 const ec = new EC('secp256k1');
@@ -80,18 +79,25 @@ exports.mempool_transaction = function(req, res) {
 
 exports.add_personnal_mempool = async function(req, res) {
     try {
-        if (typeof req.body ==! 'undefined') {
-            let id = req.session.id;
-            await models.Usertransaction.create({
-                user_id: id,
-                Amount: amount,
-                Fee: fee,
-                From: from,
-                To: to,
-                Signature: signature,
-            });
-            res.end(JSON.stringify({code : 200, message: "Transaction sucessful saved !"}));
-        }
+        console.log('test');
+        let email = req.session.email;
+        var user = await models.User.findOne({
+            where: { email: email }
+        });
+        let amount =  req.body.amount;
+        let fee =  req.body.fee;
+        let from =  req.body.from;
+        let to =  req.body.to;
+        let signature = req.body.signature;
+        await models.Usertransaction.create({
+            user_id: user.id,
+            Amount: amount,
+            Fee: fee,
+            From: from,
+            To: to,
+            Signature: signature,
+        });
+        res.end(JSON.stringify({code : 200, message: "Transaction sucessful saved !"}));
     } catch (err) {
         console.error(err);
     }
@@ -99,13 +105,15 @@ exports.add_personnal_mempool = async function(req, res) {
 
 exports.get_personnal_mempool = async function(req, res) {
     try {
-        let id = req.session.id;
-        let user_email = req.session.email;
+        let email = req.session.email;
+        var user = await models.User.findOne({
+            where: { email: email }
+        });
         var transactions = await models.Usertransaction.findAll({
-            where: {user_id: id},
+            where: {user_id: user.id},
         });
         console.log(transactions);
-        res.render('node/mempool_tobemined', {user_email: user_email, transactions: transactions});
+        res.render('node/mempool_tobemined', {user_email: email, transactions: transactions});
     } catch (err) {
         console.error(err);
     }

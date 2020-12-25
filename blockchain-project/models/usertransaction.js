@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
   };
   Usertransaction.init({
     user_id: DataTypes.INTEGER,
-    TrNr: DataTypes.INTEGER,
     Amount: DataTypes.STRING,
     Fee: DataTypes.STRING,
     From: DataTypes.STRING,

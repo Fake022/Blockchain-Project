@@ -5,6 +5,6 @@ function getList() {
 
 }
 
-function sendToMining() {
+function sendToMining(index) {
     
 }

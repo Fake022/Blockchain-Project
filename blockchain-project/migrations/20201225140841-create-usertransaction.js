@@ -11,9 +11,6 @@ module.exports = {
       user_id: {
         type: Sequelize.INTEGER
       },
-      TrNr: {
-        type: Sequelize.INTEGER
-      },
       Amount: {
         type: Sequelize.STRING
       },

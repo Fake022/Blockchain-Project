@@ -12,6 +12,7 @@ worker.port.start();
 //    setInterval(() => { checkTransaction(); }, 5000);
 //}
 
+
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -107,7 +108,10 @@ function listcmp(arg1, arg2) {
         return listcmp(arg1[key],arg2[key]);
       }));
     }
-    return (arg1===arg2);
+    return (arg1 === arg2);
+  }
+  if (Object.prototype.toString.call(arg1).search("button") > 6 || Object.prototype.toString.call(arg2).search("button") > 6) {
+    return true;
   }
   return false;
 };
@@ -155,7 +159,7 @@ function verifSignature(index) {
   });
 }
 
-function sendToMempool(index) {
+function sendToMempool(index, data) {
   const uri = 'http://localhost:8000/node/add_personnal_mempool';
   var amount  = document.getElementById('amount-' + index).innerText;
   var fee  = document.getElementById('fee-' + index).innerText;
@@ -177,51 +181,48 @@ function sendToMempool(index) {
       console.log('Error sendToMempoll : something went wrong ...');
     }
   }).then(res => {
-    document.getElementById('nb' + index) = '';
+    document.getElementById("table").deleteRow(index);
+    
   });
 }
 
 function saveList(data) {
   local_list = JSON.parse(localStorage.getItem('transaction_list'));
-  if (document.getElementById('table-body') == null && local_list !== 'undefined') {
+
+  if (document.getElementById('transaction-list') == null && local_list !== 'undefined') {
+    console.log('clear');
     localStorage.clear();
-    console.log('ici');
   }
+  console.log(local_list);
   if (local_list == null) {
-    var i = 0;
-    console.log('debug1');
-    document.getElementById('transaction-list').innerHTML = '<tr id="table-body">';
+    var i = 1;
+    document.getElementById('transaction-list').innerHTML = '';
     data.forEach(node => {
       var tmp = document.getElementById('transaction-list').innerHTML;
-      i++;
-      console.log(node.Fee);
-      document.getElementById('transaction-list').innerHTML =  tmp + '<div id=nb"' + i + '">' + '<td>'+ i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '">' + node.Fee + '</td>'  + '<td id="from-' + i + '">' + node.From + '</td>' + '<td id="to-' + i + '">' + node.To + '</td>' + '<td id="signature-' + i + '">' + node.Signature + '</td>' 
+      document.getElementById('transaction-list').innerHTML =  tmp + '<tr id="nb' + i + '">' + '<td>'+ i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '">' + node.Fee + '</td>'  + '<td id="from-' + i + '">' + node.From + '</td>' + '<td id="to-' + i + '">' + node.To + '</td>' + '<td id="signature-' + i + '">' + node.Signature + '</td>' 
       + '<td><div id="button-'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifBalance('+ i +')">Check Balance</button></div></td>'
       + '<td><div id="button-verif'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifSignature('+ i +')">Check Signature</button></div></td>'
-      + '<td><div id="button-send'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Send To Mempool</button></div></td></div>';
-   });
-   var tmp = document.getElementById('transaction-list').innerHTML; 
-   document.getElementById('transaction-list').innerHTML = tmp + '</tr>';
+      + '<td><div id="button-send'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMempool('+ i +')">Send To Mempool</button></div></td></tr>';
+      i++;
+    });
    localStorage.setItem('transaction_list', JSON.stringify(data));
    local_list = JSON.parse(localStorage.getItem('transaction_list'));
   }
   console.log(local_list);
   if (listcmp(data, local_list) == false) {
-    console.log('debug2');
     var index = checklinediff(data, local_list);
     var i = 1;
-    console.log('index: ' + index);
       data.forEach(node => {
-        var tmp = document.getElementById('transaction-list').innerHTML;
-        if (parseInt(i) > parseInt(index)) {
-          document.getElementById('transaction-list').innerHTML =  tmp + '<div id=nb"' + i + '">' + '<td >' + i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '">' + node.Fee + '</td>'  + '<td id="from-' + i + '">' + node.From + '</td>' + '<td id="to-' + i + '">' + node.To + '</td>' + '<td id="sign-' + i + '">' + node.Signature + '</td>' 
+        if (i > index) {
+          document.getElementById('transaction-list').innerHTML = '<tr id="nb' + i + '">' + '<td >' + i + '</td>' +'<td id="amount-' + i + '">' + node.Amount + '</td>' + '<td id="fee-' + i + '">' + node.Fee + '</td>'  + '<td id="from-' + i + '">' + node.From + '</td>' + '<td id="to-' + i + '">' + node.To + '</td>' + '<td id="sign-' + i + '">' + node.Signature + '</td>' 
           + '<td><div id="button-'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifBalance('+ i +')">Check Balance</button></div></td>'
           + '<td><div id="button-verif'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="verifSignature('+ i +')">Check Signature</button></div></td>'
-          + '<td><div id="button-send'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Send To Mempool</button></div></td></div>';
+          + '<td><div id="button-send'+ i +'" class="button_send_mining"><button type="button" class="btn btn-primary" onclick="sendToMempool('+ i +')">Send To Mempool</button></div></td></tr>';
         }
         i++;
       });
-    localStorage.setItem('transaction_list', JSON.stringify(data));
+   localStorage.setItem('transaction_list', JSON.stringify(data));
   }
+  local_list = JSON.parse(localStorage.getItem('transaction_list'));
 }
 
