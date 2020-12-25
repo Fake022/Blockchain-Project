@@ -87,7 +87,7 @@ exports.send = async (req, res) => {
     var allBlocks = await models.Block.findAll();
     for (let fblock of allBlocks) {
         if (fblock.hash == block.hash) {
-            res.send("already found");
+            res.status(403).end();
             return;
         }
     }

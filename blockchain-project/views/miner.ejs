@@ -102,6 +102,12 @@
             Block sent successfully !
         </div>
       </div>
+      <div class="alert-refused">
+        <div id="alert-refused" class="alert alert-danger" style="display: none;" role="alert">
+            <img width="24" height="24" src="/images/x.png" />
+            Block with this hash already exists !
+        </div>
+      </div>
       <script>
         function Mine() {
           var block = document.getElementById('block').value;
@@ -157,9 +163,18 @@
               document.getElementById('alert-sent').style.display = "block";
               setTimeout(function(){
                   document.getElementById('alert-sent').style.display = "none";
-              }, 2000);
+              }, 5000);
               console.log("sent");
-            } else {
+            } else if (response.status == 403) {
+              let send = document.getElementById('send');
+              send.setAttribute('disabled', "");
+              document.getElementById('alert-refused').style.display = "block";
+              setTimeout(function(){
+                  document.getElementById('alert-refused').style.display = "none";
+              }, 5000);
+              console.log("block refused");
+            }
+              else {
               console.log('Error Send: something went wrong ...');
             }
           });
