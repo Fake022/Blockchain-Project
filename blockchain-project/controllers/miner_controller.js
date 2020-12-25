@@ -93,6 +93,7 @@ exports.send = async (req, res) => {
     }
     if (req.body != null) {
         await models.Block.create(block);
+        await models.Usertransaction.destroy({where: {user_id: user.id}});
         res.status(200).end();
     } else {
         res.status(400).end();
