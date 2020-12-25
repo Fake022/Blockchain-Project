@@ -92,12 +92,27 @@ exports.verify_block = async function(req, res) {
     res.status(200).end();
 }
 
-exports.checkbalans = function(req, res) {
-    res.status(200).send();
-}
-
-exports.checksign = function(req, res) {
-    res.status(200).send();
+exports.checkbalans = async function(req, res) {
+    var transactions = req.body.transactions;
+    var wallets = await models.Wallet.findAll()
+    var balances = new Map();
+    wallets.map(wallet => {balances.set(wallet.dataValues.publicKey, wallet.dataValues.amount)});
+    var verif = new Promise((resolve, reject) => {
+        for (const tx of transactions) {
+            console.log("yus");
+            if (tx.From == "SYSTEM")
+                continue;
+            if (!balances.has(tx.From))
+                resolve("false");
+            balances.set(tx.From, balances.get(tx.From) - tx.Amount);
+            if (balances.get(tx.From) < 0) {
+                resolve("false");
+            }
+        }
+        console.log("ey");
+        resolve("true");
+    })
+    verif.then(result => {console.log(result); res.send(result)});
 }
 
 exports.checkhash = function(req, res) {

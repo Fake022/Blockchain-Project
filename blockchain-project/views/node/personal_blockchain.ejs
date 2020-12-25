@@ -203,24 +203,63 @@
         }
         fetch(uri, initDetails).then(response => {
           if (response.status == 200) {
-            return response.text()
+            return response.json()
           } else {
             verif = "false"
             console.log('Error checkSign: something went wrong ...');
           }
-        }).then((res) => {verif = res});
+        }).then((res) => {
+          verif = res.body;
+          if (verif == true) {
+            signatureOK.removeAttribute("disabled");
+            signButton.style["background-color"] = "lime";
+            signButton.innerText = "OK";
+            signButton.setAttribute("disabled", "");
+          } else {
+            signatureOK.removeAttribute("disabled");
+            signButton.style["background-color"] = "red";
+            signButton.innerText = "NOT OK";
+            signButton.setAttribute("disabled", "");
+          }
+        });
       }
-      if (verif == "true")
-        signatureOK.removeAttribute("disabled");
-        signButton.style["background-color"] = "lime";
-        signButton.innerText = "OK";
-        signButton.setAttribute("disabled", "");
     }
 
     function checkbalans(j) {
-      var button = document.getElementById(`checkbalans${j}`);
+      var balansButton = document.getElementById(`checkbalans${j}`);
       var balanceOK = document.getElementById(`balanceOK${j}`);
-      balanceOK.removeAttribute("disabled");
+      var verif = "true";
+      var block = JSON.parse(nblocks)[j];
+      for (let tx of block.transactions) {
+        console.log(tx);
+        const uri = 'http://localhost:8000/node/checkbalans';
+        const initDetails = {
+          method: 'post',
+          body: JSON.stringify(block),
+          headers: {"Content-Type": "application/json"}
+        }
+        fetch(uri, initDetails).then(response => {
+          if (response.status == 200) {
+            return response.text()
+          } else {
+            verif = "false"
+            console.log('Error checkBalans: something went wrong ...');
+          }
+        }).then((res) => {
+          verif = res
+          if (verif == "true") {
+            balanceOK.removeAttribute("disabled");
+            balansButton.style["background-color"] = "lime";
+            balansButton.innerText = "OK";
+            balansButton.setAttribute("disabled", "");
+          } else {
+            balanceOK.removeAttribute("disabled");
+            balansButton.style["background-color"] = "red";
+            balansButton.innerText = "NOT OK";
+            balansButton.setAttribute("disabled", "");
+          }
+        });
+      }
     }
 
     function checkhash(j) {
@@ -241,7 +280,10 @@
           checkhashButton.setAttribute("disabled", "");
           hashOK.removeAttribute("disabled");
         } else {
-          console.log('Error checkhash: something went wrong ...');
+          checkhashButton.style["background-color"] = "red";
+          checkhashButton.innerText = "NOT OK";
+          checkhashButton.setAttribute("disabled", "");
+          hashOK.removeAttribute("disabled");
         }
       });
     }
