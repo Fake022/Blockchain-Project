@@ -100,10 +100,23 @@ exports.add_personnal_mempool = async function(req, res) {
 exports.get_personnal_mempool = async function(req, res) {
     try {
         let id = req.session.id;
-        let user_email = req.session.email;
+        let email = req.session.email;
+        var user = await models.User.findOne({
+            where: { email: email }
+        });
         var transactions = await models.Transaction.findAll();
-        console.log(transactions);
-        res.render('node/mempool_tobemined', {user_email: user_email, transactions: transactions});
+        var userTransactions = await models.Usertransaction.findAll({where: {user_id: user.id}});
+        for (let usertx of userTransactions) {
+            for (let tx of transactions) {
+                console.log(usertx, tx)
+                if (usertx.id == tx.id) {
+                    transactions.splice(transactions.indexOf(tx), 1);
+                    console.log("delet ", tx.id);
+                }
+            }
+        }
+        console.log(userTransactions);
+        res.render('node/mempool_tobemined', {user_email: email, transactions: transactions});
     } catch (err) {
         console.error(err);
     }
