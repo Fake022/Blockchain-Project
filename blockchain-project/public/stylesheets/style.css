@@ -94,6 +94,10 @@ body {
     position: relative;
 }
 
+.tx-table {
+    overflow: scroll;
+}
+
 .mempool-table {
   position: relative;
   margin-top: 4%;

@@ -36,7 +36,7 @@
       </nav>
       <%- include('../component/sidebar/sidebar.ejs', {active_index: null, active_miner: null, active_wallet: null, active_economy: null, active_node: "active"}) %>
     <div class="blockchain">
-      <div  style="margin-bottom:10px;margin-top:15px">
+      <div class="tx-table" style="margin-bottom:10px;margin-top:15px">
         <h2>Personal Blockchain</h2>
         <table id="blockchain" class="table table-hover table-bordered text-table">
           <thead>
@@ -90,7 +90,7 @@
               <input id="prev" name="prev" type="text" class="form-control" disabled value="<%= nblocks[j].prev %>"/>
               Block hash
               <input id="hash" name="hash" type="text" class="form-control" disabled value="<%= nblocks[j].hash %>"/>
-              <div style="text-align:center;margin-bottom:10px;margin-top:15px">
+              <div class="tx-table" style="text-align:center;margin-bottom:10px;margin-top:15px">
                 <h4>Transactions</h4>
                 <table id="transactions" class="table table-hover table-bordered text-table">
                   <thead>
@@ -216,7 +216,6 @@
             signButton.innerText = "OK";
             signButton.setAttribute("disabled", "");
           } else {
-            signatureOK.removeAttribute("disabled");
             signButton.style["background-color"] = "red";
             signButton.innerText = "NOT OK";
             signButton.setAttribute("disabled", "");
@@ -232,7 +231,7 @@
       var block = JSON.parse(nblocks)[j];
       for (let tx of block.transactions) {
         console.log(tx);
-        const uri = 'http://localhost:8000/node/checkbalans';
+        const uri = 'http://localhost:8000/wallet/checkbalans';
         const initDetails = {
           method: 'post',
           body: JSON.stringify(block),
@@ -253,7 +252,6 @@
             balansButton.innerText = "OK";
             balansButton.setAttribute("disabled", "");
           } else {
-            balanceOK.removeAttribute("disabled");
             balansButton.style["background-color"] = "red";
             balansButton.innerText = "NOT OK";
             balansButton.setAttribute("disabled", "");
@@ -265,7 +263,7 @@
     function checkhash(j) {
       const blocks = JSON.parse(nblocks);
       const block = blocks[j];
-      const uri = 'http://localhost:8000/node/checkhash';
+      const uri = 'http://localhost:8000/wallet/checkhash';
       var checkhashButton = document.getElementById(`checkhash${j}`);
       var hashOK = document.getElementById(`hashOK${j}`);
       const initDetails = {
@@ -283,7 +281,6 @@
           checkhashButton.style["background-color"] = "red";
           checkhashButton.innerText = "NOT OK";
           checkhashButton.setAttribute("disabled", "");
-          hashOK.removeAttribute("disabled");
         }
       });
     }
@@ -300,6 +297,7 @@
       fetch(uri, initDetails).then(response => {
         if (response.status == 200) {
           console.log("oke");
+          location.reload();
         } else {
           console.log('Error Validate: something went wrong ...');
         }

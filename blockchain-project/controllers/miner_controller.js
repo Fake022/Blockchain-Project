@@ -12,8 +12,8 @@ const crypto = require("crypto");
 const bcrypt = require('bcrypt');
 
 async function getTransactions(user) {
-    var transactions = await models.Transaction.findAll({
-        // where: { user_id: user.id }
+    var transactions = await models.Usertransaction.findAll({
+        where: { user_id: user.id }
     });
     var newTransactions = new Array();
     for (let Tx of transactions) {
@@ -46,9 +46,7 @@ exports.miner_page = async (req, res) => {
     console.log(transactions);
     if (!transactions.find(transaction => transaction.coinbase === true)) {
         var hashTx = crypto.createHash('sha256').update("SYSTEM" + wallet.publicKey + "1000", 'utf-8').digest('hex');
-        var sig = ec.sign(hashTx, wallet.privateKey, {canonical: true});
-        var signature = sig.toDER('hex');
-        transactions.push({id: transactions.length + 1, Amount: 1000, Fee: 0, From: "SYSTEM", To: wallet.publicKey, Signature: signature, coinbase: true});
+        transactions.push({id: transactions.length + 1, Amount: 1000, Fee: 0, From: "SYSTEM", To: wallet.publicKey, Signature: "-", coinbase: true});
     }
     res.render('miner', {
         user_email: email,
@@ -87,12 +85,22 @@ exports.send = async (req, res) => {
     var allBlocks = await models.Block.findAll();
     for (let fblock of allBlocks) {
         if (fblock.hash == block.hash) {
-            res.send("already found");
+            res.status(403).end();
             return;
         }
     }
     if (req.body != null) {
         await models.Block.create(block);
+        var transactions = await models.Transaction.findAll();
+        var userTransactions = await models.Usertransaction.findAll({where: {user_id: user.id}});
+        for (let usertx of userTransactions) {
+            for (let tx of transactions) {
+                if (usertx.id == tx.id) {
+                    tx.destroy();
+                    usertx.destroy();
+                }
+            }
+        }
         res.status(200).end();
     } else {
         res.status(400).end();

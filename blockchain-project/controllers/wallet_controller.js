@@ -95,7 +95,9 @@ exports.wallet_verif_sign = async function(req, res) {
             var from = req.body.from;
             var to = req.body.to;
             var signature = req.body.signature;
-            if(!signature || signature.length === 0) {
+            if (from === "SYSTEM")
+                res.end(JSON.stringify({code: 200, body: true}));
+            if (!signature || signature.length === 0) {
                 res.end(JSON.stringify({code: 200, body: "false"}));
             }
             var hash = crypto.createHash('sha512');
@@ -135,3 +137,37 @@ exports.wallet_sign_transaction = async function (req, res) {
         res.end(JSON.stringify({code: 200, body: signature}));
     }
 };
+
+exports.checkbalans = async function(req, res) {
+    var transactions = req.body.transactions;
+    var wallets = await models.Wallet.findAll()
+    var balances = new Map();
+    wallets.map(wallet => {balances.set(wallet.dataValues.publicKey, wallet.dataValues.amount)});
+    var verif = new Promise((resolve, reject) => {
+        for (const tx of transactions) {
+            console.log("yus");
+            if (tx.From == "SYSTEM")
+                continue;
+            if (!balances.has(tx.From))
+                resolve("false");
+            balances.set(tx.From, balances.get(tx.From) - tx.Amount);
+            if (balances.get(tx.From) < 0) {
+                resolve("false");
+            }
+        }
+        console.log("ey");
+        resolve("true");
+    })
+    verif.then(result => {console.log(result); res.send(result)});
+}
+
+exports.checkhash = function(req, res) {
+    var block = req.body;
+
+    var hash = crypto.createHash("sha256").update(block.block + JSON.stringify(block.transactions) + block.prev + block.nonce).digest("hex");
+
+    if (hash == block.hash)
+        res.status(200).end();
+    else
+        res.status(400).end();
+}
