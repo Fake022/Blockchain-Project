@@ -10,5 +10,6 @@ router.get('/node/mempool', node_controller.get_personnal_mempool);
 router.post('/node/verify_block', node_controller.verify_block);
 router.post('/node/add_new_transaction', node_controller.add_new_transaction);
 router.post('/node/add_personnal_mempool', node_controller.add_personnal_mempool);
+router.post('/node/sendMining', node_controller.sendMining);
 
 module.exports = router;

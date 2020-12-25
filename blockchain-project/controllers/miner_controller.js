@@ -12,8 +12,8 @@ const crypto = require("crypto");
 const bcrypt = require('bcrypt');
 
 async function getTransactions(user) {
-    var transactions = await models.Transaction.findAll({
-        // where: { user_id: user.id }
+    var transactions = await models.Usertransaction.findAll({
+        where: { user_id: user.id }
     });
     var newTransactions = new Array();
     for (let Tx of transactions) {

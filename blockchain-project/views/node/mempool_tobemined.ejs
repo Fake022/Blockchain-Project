@@ -2,15 +2,19 @@
   <head>
      <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blockchain Simulator</title>    
+    <title>Blockchain Simulator</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <script>
+      var transactions = '<%- JSON.stringify(transactions) %>';
+    </script>
+  </head>
     <body>
       <nav class="navbar navbar-light bg-light p-3">
           <div class="d-flex col-12 col-md-3 col-lg-2 mb-2 mb-lg-0 flex-wrap flex-md-nowrap justify-content-between">
               <a class="navbar-brand" href="#">
-                  Blochain Dashboard
+                  Blockchain Dashboard
               </a>
               <button class="navbar-toggler d-md-none collapsed mb-3" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
@@ -35,7 +39,7 @@
     <h3>Personnal Mempool</h3>
     </div>
       <div class="mempool-body">
-        <div class="mempool-table">
+        <div class="tx-table mempool-table">
           <table class="table">
             <thead>
                 <tr>
@@ -50,11 +54,11 @@
             </thead>
             <tbody id="transaction_to_be_mined-list">
                 <% if (transactions.length > 0) { %>
-                    <% for (var i = 1; i < transactions.length; i++){ %>
-                        <div id="nb<=%i%>"> 
+                    <% for (var i = 0; i < transactions.length; i++){ %>
+                        <div id="nb<=%i%>">
                             <tr>
                                 <td>
-                                    <%= i %>
+                                    <%= transactions[i].id %>
                                 </td>
                                 <td>
                                     <%= transactions[i].Amount %>
@@ -72,7 +76,7 @@
                                     <%= transactions[i].Signature %>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-primary" onclick="sendToMining('+ i +')">Check Balance</button></div>
+                                    <button id="<%= 'sendmining' + i %>" type="button" class="btn btn-primary" onclick="sendToMining('<%= i %>')">Send to mining</button></div>
                                 </td>
                             </tr>
                         </div>
@@ -83,6 +87,27 @@
         </div>
       </div>
   </div>
+  <script>
+    function sendToMining(i) {
+      var button = document.getElementById(`sendmining${i}`);
+      console.log(button, i);
+      const transactionlist = JSON.parse(transactions);
+      const uri = 'http://localhost:8000/node/sendMining';
+      const initDetails = {
+        method: 'post',
+        body: JSON.stringify(transactionlist[i]),
+        headers: {"Content-Type": "application/json"}
+      }
+      fetch(uri, initDetails).then(response => {
+        if (response.status == 200) {
+          console.log("oke");
+          button.setAttribute("disabled", "");
+        } else {
+          console.log('Error Validate: something went wrong ...');
+        }
+      });
+    }
+  </script>
     <script src="/javascripts/personnal_mempool"></script>
 </body>
 <footer>

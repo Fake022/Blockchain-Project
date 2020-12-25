@@ -101,9 +101,7 @@ exports.get_personnal_mempool = async function(req, res) {
     try {
         let id = req.session.id;
         let user_email = req.session.email;
-        var transactions = await models.Usertransaction.findAll({
-            where: {user_id: id},
-        });
+        var transactions = await models.Transaction.findAll();
         console.log(transactions);
         res.render('node/mempool_tobemined', {user_email: user_email, transactions: transactions});
     } catch (err) {
@@ -124,3 +122,15 @@ exports.verify_block = async function(req, res) {
     await block.save();
     res.status(200).end();
 };
+
+exports.sendMining = async function(req, res) {
+    var transaction = req.body;
+    var email = req.session.email;
+    var user = await models.User.findOne({
+        where: { email: email }
+    });
+    transaction.user_id = user.id;
+    models.Usertransaction.create(transaction).then((transaction) => {
+        res.status(200).end();
+    });
+}
